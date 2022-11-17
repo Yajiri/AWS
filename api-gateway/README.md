@@ -1,4 +1,4 @@
-<p align="center"><img src="public/images/toothie-1.png?raw=true" alt="rover-logo.png" width="120"></p>
+<p align="center"><img src="public/images/toothie-1.png?raw=true" alt="toothie-logo.png" width="120"></p>
 
 Appointment management system for Dental offices booking and its management 
 
@@ -27,6 +27,7 @@ Substitute proper service hostname, port and gateway hostname for container setu
 ```curl -X POST -d '{"serviceName": "YOUR_MICROSERVICE_NAME", "url": "http://SERVICE_HOSTNAME:PORT/"}' http://API_GATEWAY_HOSTNAME:3030/unregister -H "Content-Type: application/json"```
 
 For testing from Windows, you will need the following format for double quotes escaping:
+
 ```curl -d "{\"serviceName\": \"YOUR_MICROSERVICE_NAME\", \"url\": \"http://SERVICE_HOSTNAME:PORT/\"}" -X POST http://API_GATEWAY_HOSTNAME:3030/unregister -H "Content-Type: application/json"```
 
 
