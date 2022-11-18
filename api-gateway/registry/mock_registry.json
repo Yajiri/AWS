@@ -241,6 +241,11 @@
                 }
             ],
             "loadBalancerStrategy": "ROUND_ROBIN"
+        },
+        "somenew-service": {
+            "index": 3,
+            "instances": [],
+            "loadBalancerStrategy": "ROUND_ROBIN"
         }
     }
 }
