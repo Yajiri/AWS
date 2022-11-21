@@ -6,12 +6,18 @@ const HomePage = (props) => {
 
     return (
         <>
-            <h1>Home</h1>
-            <p>OfficeDashboard</p>
-            <Link to={'/layouts/officeDashboard'}>Go to Office</Link>
-
-            <p>DentistDashbord</p>
-            <p>UserDashboard</p>
+            <h1>Dentistimo Home</h1>
+            <br/>
+            <div>
+                <ul>
+                    <li><Link to={'/register'}>Sign up/in</Link></li>
+                    <li><Link to={'/user-dashboard'}>User Dashboard</Link></li>
+                    <li><Link to={'/dentist-dashboard'}>Dentist Dashboard</Link></li>
+                    <li><Link to={'/office-dashboard'}>Office Dashboard</Link></li>
+                </ul>
+            </div>
+           
+               
         </>
     )
 }
