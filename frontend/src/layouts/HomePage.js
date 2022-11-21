@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const HomePage = (props) => {
-    const [state1, setState1] = useState('test value');
-
     return (
         <>
             <h1>Dentistimo Home</h1>
@@ -15,9 +12,7 @@ const HomePage = (props) => {
                     <li><Link to={'/dentist-dashboard'}>Dentist Dashboard</Link></li>
                     <li><Link to={'/office-dashboard'}>Office Dashboard</Link></li>
                 </ul>
-            </div>
-           
-               
+            </div>              
         </>
     )
 }

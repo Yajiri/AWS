@@ -1,5 +1,6 @@
 import React from 'react';
 import { CDBFooter, CDBBox} from 'cdbreact';
+import Logo from '../Logo';
 
 export const Footer = () => {
     return (
@@ -18,6 +19,7 @@ export const Footer = () => {
                 src="https://cdn-icons-png.flaticon.com/512/1446/1446874.png"
                 width="30px"
               />
+              <Logo />
               <span className="ml-4 h5 mb-0 font-weight-bold">Dentistimo</span>
             </div>
           </CDBBox>
