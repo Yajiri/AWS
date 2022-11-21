@@ -9,6 +9,7 @@ import UserDashboard from './layouts/UserDashboard';
 import DentistDashboard from './layouts/DentistDashboard';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import Register from './layouts/Register';
+import NotFound from './layouts/NotFound';
 
 import './assets/scss/App.css';
 
@@ -23,6 +24,7 @@ function App() {
             <Route path='/office-dashboard' element={<OfficeDashboard />} />
             <Route path='/user-dashboard' element={<UserDashboard />} />
             <Route path='/dentist-dashboard' element={<DentistDashboard />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
         </Routes>
       </Router>
