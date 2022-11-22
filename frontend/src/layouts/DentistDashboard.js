@@ -5,9 +5,7 @@ const DentistDashbord = (props) => {
     
 
     return (
-        <>
-            <h1>Dentist</h1>
-        </>
+        <h1>Dentist</h1>
     )
 }
 
