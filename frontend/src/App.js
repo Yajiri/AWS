@@ -6,7 +6,7 @@ import {
 import HomePage from './layouts/HomePage';
 import OfficeDashboard from './layouts/OfficeDashboard';
 import UserDashboard from './layouts/UserDashboard';
-import DentistDashboard from './layouts/DentistDashboard';
+import DentistDashboard from './layouts/Dentist/DentistDashboard';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import Register from './layouts/Register';
 import NotFound from './layouts/NotFound';
