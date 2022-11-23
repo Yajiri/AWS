@@ -14,11 +14,6 @@ export const Footer = () => {
         >
           <CDBBox display="flex" alignItems="center">
             <div className="d-flex align-items-center p-0 text-dark">
-              <img
-                alt="logo"
-                src="https://cdn-icons-png.flaticon.com/512/1446/1446874.png"
-                width="30px"
-              />
               <Logo />
               <span className="ml-4 h5 mb-0 font-weight-bold">Dentistimo</span>
             </div>
