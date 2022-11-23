@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Footer } from "./Footer";
+import  NavigationBar from "./NavigationBar";
 
 const MainLayout = (props) => {
     const [state1, setState1] = useState('test value');
@@ -8,7 +9,7 @@ const MainLayout = (props) => {
 
     return (
         <div>
-            <h1>Navbar placeholder</h1>
+            <NavigationBar />
             <div className={'container border-1'}>
                 <Outlet />
             </div>
