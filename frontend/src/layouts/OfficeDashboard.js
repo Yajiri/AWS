@@ -1,4 +1,4 @@
-import Reacy, { Component } from "react";
+import React, { Component } from "react";
 import { Container, Row, Tabs, Tab } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Appointments from "./MainLayout/Appointments";
