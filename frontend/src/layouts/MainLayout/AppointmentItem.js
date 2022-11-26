@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 export class AppointmentItem extends Component {
   render() {
     return (
-      <div style={ backgroundStyle }>{ this.props.appointment.title} <button type="button" class="btn btn-light"> Accept </button> <button type="button" class="btn btn-light"> Deny </button></div>
+      <div style={ backgroundStyle }>{this.props.appointment.title}, {this.props.appointment.time} <button type="button" class="btn btn-light" style={{margin: '15px'}}> Accept </button><button type="button" class="btn btn-light"> Deny </button></div>
     )
   }
 }

@@ -9,17 +9,20 @@ import Cancellations from "./MainLayout/Cancellations";
     state = {
       appointments: [
       {
-        title: 'hi',
+        title: 'Paul McCartney',
+        time: 'Tuesday 8:30',
         id: 1,
         completed: false
       },
       {
-        title: 'こんにちは',
+        title: 'Anders Andersson',
+        time: 'Thursday 8:10',
         id: 2,
         completed: false
       },
       {
-        title: 'hello', 
+        title: 'Sven Svensson', 
+        time: 'Monday 12:00',
         id: 3,
         completed: false
       }
