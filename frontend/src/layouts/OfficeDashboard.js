@@ -12,19 +12,16 @@ import Cancellations from "./MainLayout/Cancellations";
         title: 'Paul McCartney',
         time: 'Tuesday 8:30',
         id: 1,
-        completed: false
       },
       {
         title: 'Anders Andersson',
         time: 'Thursday 8:10',
         id: 2,
-        completed: false
       },
       {
         title: 'Sven Svensson', 
         time: 'Monday 12:00',
         id: 3,
-        completed: false
       }
     ],
     inbox: [
