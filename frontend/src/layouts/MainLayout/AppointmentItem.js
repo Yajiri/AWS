@@ -13,6 +13,7 @@ export class AppointmentItem extends Component {
 
 const backgroundStyle = {
     borderBottom: '.1px #000000 dotted',
+    padding: '10px',
     display: "flex"
     // backgroundColor: 'rgba( 240,240,240, 0.3)'
 }

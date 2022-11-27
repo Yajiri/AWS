@@ -10,7 +10,7 @@ export class CancellationItems extends Component {
 
 const backgroundStyle = {
     padding: '10px',
-    borderBottom: '1px #000000 dotted',
+    borderBottom: '.1px #000000 dotted',
 }
 
 export default CancellationItems
