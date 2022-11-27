@@ -4,7 +4,7 @@ export class AppointmentItem extends Component {
   render() {
     return (
       <div style={ backgroundStyle }>{this.props.appointment.title}, {this.props.appointment.time} 
-      <button type="button" class="btn btn-light" style={{margin: '15px'}}> Accept </button>
+      <button type="button" class="btn btn-light" style={{ marginLeft: 'auto', marginRight: '1.5%'}}> Accept </button>
       <button type="button" class="btn btn-light"> Deny </button>
       </div>
     )
@@ -12,7 +12,8 @@ export class AppointmentItem extends Component {
 }
 
 const backgroundStyle = {
-    borderBottom: '1px #000000 dotted',
+    borderBottom: '.1px #000000 dotted',
+    display: "flex"
     // backgroundColor: 'rgba( 240,240,240, 0.3)'
 }
 
