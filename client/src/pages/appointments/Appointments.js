@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { breakpoints } from '../../MediaQueries'
 
 import DatePicker from '../../components/DatePicker/index'
-import TimePicker from '../../components/TimePicker/index'
+import DesktopPicker from '../../components/TimePicker/DesktopPicker'
+import MobilePicker from '../../components/TimePicker/MobilePicker'
 
 const MainCointainer = styled.div`
 height: 100vh;
@@ -20,6 +21,12 @@ h2,h3,h4,h5,h6{
 const Box = styled.div`
 margin-top: 8rem;
 text-align: center;
+h1, h3 {
+  color: #181945;
+},
+h5 {
+  color: #7B55EC;
+}
 
 @media (min-width: ${breakpoints.mobileMin}) {
   padding: 0 2.5rem;
@@ -49,7 +56,8 @@ position: relative;
 }
 `
 const MobileTime = styled.div`
-display: inline;
+display: block;
+padding: 0 2rem;
 
 @media (min-width: ${breakpoints.mobileMin}) {
   display: none;
@@ -86,8 +94,11 @@ const Appointments = () => {
           <DatePicker />
         </Calendar>
         <DesktopTime>
-          <TimePicker />
+          <DesktopPicker />
         </DesktopTime>
+        <MobileTime>
+          <MobilePicker />
+        </MobileTime>
       </DateTime>
     </MainCointainer>
     
