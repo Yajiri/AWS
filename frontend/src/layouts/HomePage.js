@@ -8,7 +8,7 @@ const HomePage = (props) => {
             <div>
                 <ul>
                     <li><Link to={'/register'}>Sign up/in</Link></li>
-                    <li><Link to={'/user-dashboard'}>User Dashboard</Link></li>
+                    <li><Link to={'/Patient-dashboard'}>Patient Dashboard</Link></li>
                     <li><Link to={'/dentist-dashboard'}>Dentist Dashboard</Link></li>
                     <li><Link to={'/office-dashboard'}>Office Dashboard</Link></li>
                 </ul>
