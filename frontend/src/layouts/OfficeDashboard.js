@@ -15,7 +15,7 @@ import Cancellations from "./MainLayout/Cancellations";
       },
       {
         title: 'Anders Andersson',
-        time: 'Thursday 8:10',
+        time: 'Thursday 9:30',
         id: 2,
       },
       {
