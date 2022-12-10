@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 
 export default function MaterialUIPickers() {
-  const [value, setValue] = React.useState(dayjs('2022-11-29'));
+  const [value, setValue] = React.useState(dayjs('2022-11-28'));
 
   const handleChange = (newValue) => {
     setValue(newValue);
