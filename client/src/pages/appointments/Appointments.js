@@ -6,7 +6,8 @@ import { breakpoints } from '../../MediaQueries'
 //dependencies
 import axios from "axios";
 import DatePicker from '../../components/DatePicker/index'
-import TimePicker from '../../components/TimePicker/index'
+import DesktopPicker from '../../components/TimePicker/DesktopPicker'
+import MobilePicker from '../../components/TimePicker/MobilePicker'
 
 const MainCointainer = styled.div`
 height: 100vh;
@@ -56,11 +57,27 @@ h4 {
 `
 const MobileTime = styled.div`
 display: inline;
+padding: 0 2.2rem;
 
 @media (min-width: ${breakpoints.mobileMin}) {
   display: none;
 }
 `
+const DesktopTime = styled.div`
+display: none;
+position: relative;
+
+@media (min-width: ${breakpoints.mobileMin}) {
+  display: inline;
+  right: 0;
+  width: 60%;
+  position: fixed;
+  z-index: 1;
+  overflow-x: hidden;
+      
+}
+`
+
 const TimeSlot = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -80,21 +97,6 @@ background-color: #F7F7F7;
   margin: 0px 20px 0px 20px;
   `
 
-const DesktopTime = styled.div`
-display: none;
-position: relative;
-
-@media (min-width: ${breakpoints.mobileMin}) {
-  display: inline;
-  right: 0;
-  width: 60%;
-  position: fixed;
-  z-index: 1;
-  overflow-x: hidden;
-      
-}
-`
-
 class AppointmentApp extends Component {
   constructor(props, context) {
     super(props, context);
@@ -109,50 +111,6 @@ class AppointmentApp extends Component {
       stepIndex: 0
     };
   }
-
-  componentWillMount() {
-    axios.get(API_BASE + `api/retrieveSlots`).then(response => {
-      console.log("response via db: ", response.data);
-      this.handleDBReponse(response.data);
-    });
-  }
-  handleSetAppointmentDate(date) {
-    this.setState({ appointmentDate: date, confirmationTextVisible: true });
-  }
-
-  handleSetAppointmentSlot(slot) {
-    this.setState({ appointmentSlot: slot });
-  }
-  handleSetAppointmentMeridiem(meridiem) {
-    this.setState({ appointmentMeridiem: meridiem });
-  }
-  handleSubmit() {
-    this.setState({ confirmationModalOpen: false });
-    const newAppointment = {
-      name: this.state.firstName + " " + this.state.lastName,
-      email: this.state.email,
-      phone: this.state.phone,
-      slot_date: moment(this.state.appointmentDate).format("YYYY-DD-MM"),
-      slot_time: this.state.appointmentSlot
-    };
-    axios
-      .post(API_BASE + "api/appointmentCreate", newAppointment)
-      .then(response =>
-        this.setState({
-          confirmationSnackbarMessage: "Appointment succesfully added!",
-          confirmationSnackbarOpen: true,
-          processed: true
-        })
-      )
-      .catch(err => {
-        console.log(err);
-        return this.setState({
-          confirmationSnackbarMessage: "Appointment failed to save.",
-          confirmationSnackbarOpen: true
-        });
-      });
-  }
-
 }
 
 const Appointments = () => {
@@ -170,8 +128,17 @@ const Appointments = () => {
         <Calendar>
           <h4>Pick a day</h4>
           <DatePicker />
-          <h4>Pick a time</h4>
+          
         </Calendar>
+        <DesktopTime>
+        <h4>Pick a time</h4>
+          <DesktopPicker />
+        </DesktopTime>
+        <MobileTime>
+        <h4>Pick a time</h4>
+          <MobilePicker />
+        </MobileTime>
+
       </DateTime>
     </MainCointainer>
     
