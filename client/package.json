@@ -13,6 +13,7 @@
     "@mui/x-date-pickers": "^5.0.9",
     "@types/react": "^18.0.25",
     "animate-presence": "^0.2.1",
+    "aws-amplify": "^5.0.5",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.2",
     "clsx": "^1.2.1",

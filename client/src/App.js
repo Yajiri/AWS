@@ -1,13 +1,15 @@
 import { Routes, Route, useLocation } from "react-router";
 
+
 import logo from './assets/images/logo.svg';
+import { AnimatePresence } from "framer-motion";
 import Navbar from './components/Navbar/index';
 
 import Home from './pages/home/Home';
 import Appointments from './pages/appointments/Appointments';
 import Profile from './pages/profile/Profile';
 
-import { AnimatePresence } from "framer-motion";
+
 import './assets/scss/App.css';
 
 function App() {
