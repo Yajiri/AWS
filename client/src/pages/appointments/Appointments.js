@@ -6,9 +6,7 @@ import { breakpoints } from '../../MediaQueries'
 //dependencies
 import axios from "axios";
 import DatePicker from '../../components/DatePicker/index'
-import moment from "moment";
-
-const API_BASE = "http://localhost:####/";
+import TimePicker from '../../components/TimePicker/index'
 
 const MainCointainer = styled.div`
 height: 100vh;
@@ -25,12 +23,6 @@ h2,h3,h4,h5,h6{
 const Box = styled.div`
 margin-top: 8rem;
 text-align: center;
-h1, h3 {
-  color: #181945;
-},
-h5 {
-  color: #7B55EC;
-}
 
 @media (min-width: ${breakpoints.mobileMin}) {
   padding: 0 2.5rem;
@@ -63,8 +55,7 @@ h4 {
 }
 `
 const MobileTime = styled.div`
-display: block;
-padding: 0 2rem;
+display: inline;
 
 @media (min-width: ${breakpoints.mobileMin}) {
   display: none;
@@ -166,22 +157,6 @@ class AppointmentApp extends Component {
 
 const Appointments = () => {
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   return (
 
     <MainCointainer>
@@ -197,11 +172,6 @@ const Appointments = () => {
           <DatePicker />
           <h4>Pick a time</h4>
         </Calendar>
-        <TimeSlot>
-          <Slot>4:30</Slot>
-          <Slot>4:30</Slot>
-          <Slot>4:30</Slot>
-        </TimeSlot>
       </DateTime>
     </MainCointainer>
     
