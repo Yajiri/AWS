@@ -2,7 +2,7 @@ import axios from "axios";
 
 const endpoint = 'http://localhost:3000/api'
 
-export const API = axios.create({
+export const Api = axios.create({
   baseURL: endpoint
 });
 
