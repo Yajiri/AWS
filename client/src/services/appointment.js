@@ -1,4 +1,4 @@
-import { Api } from '@services/Api'
+import { Api } from '@/services/Api'
 
 export const appointmentApi = {
   getAppointments: clinicId => {

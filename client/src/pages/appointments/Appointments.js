@@ -4,14 +4,14 @@ import { breakpoints } from '../../MediaQueries'
 
 
 //dependencies
-import axios from "axios";
+import Navbar from '../../components/Navbar'
 import DatePicker from '../../components/DatePicker/index'
 import DesktopPicker from '../../components/TimePicker/DesktopPicker'
 import MobilePicker from '../../components/TimePicker/MobilePicker'
 
 const MainCointainer = styled.div`
 height: 100vh;
-overflow:hidden;
+overflow: scroll;
 position: relative;
 
 
@@ -118,6 +118,7 @@ const Appointments = () => {
   return (
 
     <MainCointainer>
+      <Navbar />
       <Box>
         <h1>Book a Visit</h1>
         <h3>Make an appointment with Dr. "name".</h3>

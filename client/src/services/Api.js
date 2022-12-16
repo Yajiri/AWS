@@ -1,13 +1,11 @@
 import axios from "axios";
 
-const endpoint = 'http://localhost:3000/api'
-
 export const Api = axios.create({
-  baseURL: endpoint
+  baseURL: 'https://8xob0txpdb.execute-api.eu-north-1.amazonaws.com/default'
 });
 
-export default () => {
+export default (endpoint) => {
   return axios.create({
-    baseURL: endpoint
+    baseURL: 'https://8xob0txpdb.execute-api.eu-north-1.amazonaws.com/default'
   })
 }

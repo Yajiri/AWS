@@ -16,10 +16,8 @@ function App() {
 
     const location = useLocation();
     return <>
-
     {}
     <AnimatePresence exitBeforeEnter>
-    <Navbar />
     <logo> </logo>
     <Routes location={location} key ={location.pathname}>
       <Route exact path="/" element={<Home />}/>
