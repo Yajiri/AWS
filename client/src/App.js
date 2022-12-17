@@ -21,9 +21,6 @@ import MainLayout from './layouts/MainLayout/MainLayout';
 import Register from './layouts/Register';
 import NotFound from './layouts/NotFound';
 
-
-import './assets/scss/App.css';
-
 function App() {
 
     const location = useLocation();
