@@ -79,6 +79,18 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${Function4}
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -98,13 +110,6 @@ Resources:
             Path: /clinics
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref DentistimoDB
-          TABLE_ARN: !GetAtt DentistimoDB.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoDB
   getClinicLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -129,13 +134,6 @@ Resources:
             Path: /clinics/{id}
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref DentistimoDB
-          TABLE_ARN: !GetAtt DentistimoDB.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoDB
   getClinicsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -184,13 +182,6 @@ Resources:
             Path: /clinics/{id}/appointments
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref DentistimoDB
-          TABLE_ARN: !GetAtt DentistimoDB.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoDB
   getAppointmentsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -215,13 +206,6 @@ Resources:
             Path: /clinics/{id}/appointments/{id}
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref DentistimoDB
-          TABLE_ARN: !GetAtt DentistimoDB.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoDB
   getAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -251,18 +235,6 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${deleteAppointment}
-  DentistimoDB:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      BillingMode: PAY_PER_REQUEST
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
 Metadata:
   AWS::Composer::Groups:
     Group:
