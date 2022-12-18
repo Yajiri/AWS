@@ -58,7 +58,7 @@ const Navbar = () => {
 
                 </Underline>
             </MenuLink>
-            <MenuLink to="/appointments">
+            <MenuLink to="/book-appointment">
                 <span>Appointments</span>
                 <Underline>
                     
