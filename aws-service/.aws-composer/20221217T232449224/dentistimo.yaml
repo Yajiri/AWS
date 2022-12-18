@@ -254,7 +254,7 @@ Resources:
           KeyType: HASH
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
-  EventWrite:
+  EventRule2:
     Type: AWS::Events::Rule
     Properties:
       EventPattern:
@@ -263,26 +263,10 @@ Resources:
       Targets:
         - Id: !Ref addAppointment
           Arn: !GetAtt addAppointment.Arn
-  EventWriteToaddAppointmentPermission:
+  EventRule2ToaddAppointmentPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !GetAtt addAppointment.Arn
       Principal: !Sub events.${AWS::URLSuffix}
-      SourceArn: !GetAtt EventWrite.Arn
-  EventDelete:
-    Type: AWS::Events::Rule
-    Properties:
-      EventPattern:
-        source:
-          - aws.health
-      Targets:
-        - Id: !Ref deleteAppointment
-          Arn: !GetAtt deleteAppointment.Arn
-  EventDeleteTodeleteAppointmentPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt deleteAppointment.Arn
-      Principal: !Sub events.${AWS::URLSuffix}
-      SourceArn: !GetAtt EventDelete.Arn
+      SourceArn: !GetAtt EventRule2.Arn

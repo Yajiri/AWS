@@ -56,6 +56,41 @@ Resources:
       Cors:
         AllowOrigins:
           - ''
+  EventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - aws.health
+  Function4:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: Function4
+      CodeUri: src/Function4
+      Handler: index.handler
+      Runtime: nodejs18.x
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+  Function4LogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Function4}
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -75,13 +110,6 @@ Resources:
             Path: /clinics
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   getClinicLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -106,13 +134,6 @@ Resources:
             Path: /clinics/{id}
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   getClinicsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -137,13 +158,6 @@ Resources:
             Path: /clinics/{id}/appointments
             Method: POST
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   addAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -168,13 +182,6 @@ Resources:
             Path: /clinics/{id}/appointments
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   getAppointmentsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -199,13 +206,6 @@ Resources:
             Path: /clinics/{id}/appointments/{id}
             Method: GET
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   getAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -230,59 +230,19 @@ Resources:
             Path: /clinics/{id}/appointments/{id}
             Method: DELETE
             RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref Table
-          TABLE_ARN: !GetAtt Table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref Table
   deleteAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${deleteAppointment}
-  Table:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      BillingMode: PAY_PER_REQUEST
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
-  EventWrite:
-    Type: AWS::Events::Rule
-    Properties:
-      EventPattern:
-        source:
-          - aws.health
-      Targets:
-        - Id: !Ref addAppointment
-          Arn: !GetAtt addAppointment.Arn
-  EventWriteToaddAppointmentPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt addAppointment.Arn
-      Principal: !Sub events.${AWS::URLSuffix}
-      SourceArn: !GetAtt EventWrite.Arn
-  EventDelete:
-    Type: AWS::Events::Rule
-    Properties:
-      EventPattern:
-        source:
-          - aws.health
-      Targets:
-        - Id: !Ref deleteAppointment
-          Arn: !GetAtt deleteAppointment.Arn
-  EventDeleteTodeleteAppointmentPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt deleteAppointment.Arn
-      Principal: !Sub events.${AWS::URLSuffix}
-      SourceArn: !GetAtt EventDelete.Arn
+Metadata:
+  AWS::Composer::Groups:
+    Group:
+      Label: API
+      Members:
+        - getClinic
+        - getClinics
+        - getAppointments
+        - addAppointment
+        - getAppointment
+        - deleteAppointment
