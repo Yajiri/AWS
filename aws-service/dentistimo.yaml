@@ -159,7 +159,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getAppointment
-      CodeUri: src/Function2
+      CodeUri: src/ReadFromDDB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -190,7 +190,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointment
-      CodeUri: src/Function2
+      CodeUri: src/WriteToEB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -220,7 +220,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: cancelAppointment
-      CodeUri: src/Function2
+      CodeUri: src/DeleteFromEB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -250,7 +250,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: cancelAppointmentDDB
-      CodeUri: src/Function3
+      CodeUri: src/DeleteFromDDB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -274,7 +274,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointmentDDB
-      CodeUri: src/Function2
+      CodeUri: src/WriteToDDB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
