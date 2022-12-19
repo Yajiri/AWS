@@ -5,6 +5,8 @@ import { breakpoints } from '../../MediaQueries'
 
 import Navbar from '../../components/Navbar';
 import Form from '../../components/Test/Form';
+import Maps from '../../components/Map/Maps'
+import DatePicker from '../../components/DatePicker/DatePicker'
 
 const API = axios.create({
   baseURL: `https://raw.githubusercontent.com/feldob/dit355_2020/master/dentists.json`
@@ -49,6 +51,7 @@ class Home extends Component{
           <h1>POST test</h1>
           <Form />
         </Box>
+        <Maps />
       </MainCointainer>
       
     );
