@@ -11,8 +11,9 @@ const BookAppointment = (props) => {
   const { doctor, setDoctor} = useState("");
   const { time, setTime} = useState("");
   const { message, setMessage} = useState("");
+  let { bookingID, setBookingID} = useState(0);
   const [loading, setLoading] = useState(false);
-  const response = "Test response"
+  let response = "Test response"
   const data = {clinic:{name:"Best Clinic", openingHours:"mon-fri: 8-16",address:"Great Street 40040 Gothenburg"}, doctors:"Mark J", appointments:[{id:1,date:"20221210",time:"8-8:30"},{id:2,date:"20221210",time:"10-10:30"}]}
 
   const onChangeSelectDoc = (e) => {
@@ -41,6 +42,15 @@ const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
+    const clinicName = data.clinic.name
+    setBookingID(bookingID+1)
+    const { bookingID, name, doctor, time, message } = this.state;
+    // await axios.post(
+    //   'https://i1xsjzkri4.execute-api.us-east-1.amazonaws.com/default/serverlessAppFunction',
+    //   { bookingID: `${clinicName}, ${bookingID}, ${doctor}, ${time},  ${name}, ${message}` }
+    // );
+    response = "Your booking was created with success! Your booking ID is " + bookingID;
+    
 }
 
 
@@ -115,16 +125,6 @@ const handleSubmit = (e) => {
                         />
                         </div>
 
-                        <div className="form-group">
-                        <label htmlFor="message">Message(optional)</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="message"
-                            value={message}
-                            onChange={onChangeMessage}
-                        />
-                        </div>
 
                         <div className="form-group">
                         <button className="btn btn-primary btn-block" disabled={loading}>
