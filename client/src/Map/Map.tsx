@@ -11,7 +11,8 @@ type MapProps = {
 
 const useStyles = makeStyles({
   map: {
-    width: '50vw',
+    marginTop: '1rem',
+    width: '50',
     height: '80vh'
   }
 })

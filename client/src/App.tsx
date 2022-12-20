@@ -2,7 +2,8 @@ import React, { ReactElement } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 
-import Navbar from './Navbar/Navbar';
+
+import Home from './Home/Home'
 import DatePicker from './DatePicker/DatePicker'
 import Map from './Map/Map'
 
@@ -18,9 +19,7 @@ function App() {
     <div className="App">
       <Router>
       <Wrapper apiKey={'AIzaSyATMY5GYUwukHd29ka5l0DM2R8goauAp0g'} render={render}>
-        <Navbar />
-        <DatePicker />
-        <Map center={{ lat: 57.7089, lng: 11.9746 }} zoom={13} />
+        <Home />
       </Wrapper>
       </Router>
       
