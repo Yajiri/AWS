@@ -96,15 +96,14 @@ const Home = () => {
       </Box>
       <Container>
         <ContentBox>
-          <Content1>
-            <h3>Choose a Date:</h3>
-            <DatePicker />
-          </Content1>
           <Content2>
             <h3>Choose a Clinic:</h3>
             <Map center={{ lat: 57.7089, lng: 11.9746 }} zoom={13} />
           </Content2>
-          <Content3>
+          <Content1>
+            <h3>Choose a Date:</h3>
+            <DatePicker />
+            <Content3>
             <h3>Overview:</h3>
             <h4>Date: DATE</h4>
             <br />
@@ -114,6 +113,8 @@ const Home = () => {
             <h4>Dentists: </h4>
             <h4>Opening hours:</h4>
           </Content3>
+          </Content1>
+          
         </ContentBox>
       </Container>
     </MainContainer>
