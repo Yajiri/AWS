@@ -4,14 +4,13 @@ import styled from 'styled-components'
 import Logo from '../assets/Logo'
 
 const Nav = styled.div`
-    padding: 1rem 1rem;
+    padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     background: transparent;
     position: fixed;
-    z-index: 1;
     left: 0;
     right: 0;
 
