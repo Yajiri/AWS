@@ -4,12 +4,11 @@ class BookAppointmentForm extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            timeSlots : props.data.clinic.timeSlots,
+            timeSlots : props.data.timeSlots,
             seletedTime: '',
-            name: '',
-            bookingID: Math.random(),
-            clinic: props.data.clinic.name,
-            date: props.data.date,
+            email: '',
+            clinicIDDate: props.data.clinicIDDate,
+            dentists: props.data.dentists,
             loading: false,
             response : ''
         };
@@ -64,12 +63,12 @@ class BookAppointmentForm extends React.Component {
                     </div>
                 
                     <div className="form-group">
-                    <label htmlFor="message">Name*</label>
+                    <label htmlFor="email">Email*</label>
                     <input
                         type="text"
                         className="form-control"
-                        name="name"
-                        value={this.state.name}
+                        name="email"
+                        value={this.state.email}
                         onChange={this.handleChange}
                         required
                     />
