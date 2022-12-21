@@ -1,4 +1,10 @@
 import React from "react";
+import Form from 'react-bootstrap/Form';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class BookAppointmentForm extends React.Component {
     constructor(props){
@@ -27,7 +33,7 @@ class BookAppointmentForm extends React.Component {
     }
 
     handleSubmit(event) {
-        // event.preventDefault();
+        event.preventDefault();
         this.setState({loading:true});
         const { timeSlot, name, bookingID, clinic, date } = this.state;
         this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'})
@@ -42,41 +48,61 @@ class BookAppointmentForm extends React.Component {
         return(
             
             <div className="card card-container">
-                <form onSubmit={this.state.handleSubmit}>
+                <form>
                     <div className="form-group">
-                        {this.state.timeSlots.map((slot) => (
-                            <div className="radio">
-                                <label>
-                                    <input
-                                        key={slot.time}
-                                        type="radio"
-                                        value={slot.time}
-                                        name="selectedTime"
-                                        checked={this.state.seletedTime===slot.time}
-                                        disabled={slot.availableSlots<1}
-                                        onChange={this.handleChange}
-                                        />
-                                        {slot.time}
-                                </label>
-                            </div>
-                        ))}
+                        <Container>
+                            <Col>
+                                <Row>
+                                    {this.state.timeSlots.map((slot) => (
+                                        <Col>
+                                            <Row>
+                                                <Button id={slot.time} variant="outline-success" disabled>{slot.time}</Button>
+                                            </Row>
+                                        </Col>
+                                        // <div className="radio">
+                                        //     <label>
+                                        //         <input
+                                        //             key={slot.time}
+                                        //             type="radio"
+                                        //             value={slot.time}
+                                        //             name="selectedTime"
+                                        //             checked={this.state.seletedTime===slot.time}
+                                        //             disabled={slot.availableSlots<1}
+                                        //             onChange={this.handleChange}
+                                        //             />
+                                        //             {slot.time}
+                                        //     </label>
+                                        // </div>
+                                    ))}
+                                </Row>
+                            </Col>
+                        </Container>
                     </div>
                 
                     <div className="form-group">
-                    <label htmlFor="email">Email*</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this.handleChange}
-                        required
-                    />
+                        <label htmlFor="seelctedTime">Select a slot*</label>
+                        <Form.Select name="selectedTime" onChange={this.handleChange}>
+                            {this.state.timeSlots.map((slot) => (
+                                <option key={slot.time} name={slot.time} value={slot.time}>{slot.time}</option>
+                            ))}
+                        </Form.Select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="email">Email*</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="email"
+                                value={this.state.email}
+                                onChange={this.handleChange}
+                                required
+                            />
                     </div>
 
 
                     <div className="form-group">
-                    <button className="btn btn-primary btn-block" > 
+                    <button className="btn btn-primary btn-block" onClick={this.handleChange} > 
                     {/* disabled={this.state.loading} */}
                         {this.state.loading && (
                         <span className="spinner-border spinner-border-sm"></span>

@@ -46,11 +46,23 @@ const BookAppointment = (props) => {
     dentists: 3,
     clinicIDDate:"1_12-11-2022",
     timeSlots: [
-      {"7:00": ["e1@email.com", "e2@email.com"]},
-      {"7:30": ["e12@email.com", "e221@email.com", "e22@email.com"]},
-      {"8:00": ["e13@email.com"]},
-      {"8:30": ["e14@email.com"]},
-      {"8:00": []}
+      {time:"7:00", bookings: ["e1@email.com", "e2@email.com"]},
+      {time:"7:30", bookings: ["e12@email.com", "e221@email.com", "e22@email.com"]},
+      {time:"8:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
+      {time:"8:30", bookings: ["e13@email.com"]},
+      {time:"9:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
+      {time:"9:30", bookings: ["e13@email.com"]},
+      {time:"10:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
+      {time:"10:30", bookings: ["e13@email.com"]},
+      {time:"11:00", bookings: ["e13@email.com"]},
+      {time:"11:30", bookings: ["e13@email.com"]},
+      {time:"12:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
+      {time:"12:30", bookings: ["e13@email.com"]},
+      {time:"14:00", bookings: ["e13@email.com"]},
+      {time:"14:30", bookings: ["e13@email.com"]},
+      {time:"15:00", bookings: ["e13@email.com"]},
+      {time:"15:30", bookings: ["e13@email.com"]},
+      {time:"16:00", bookings: ["e13@email.com"]}
     ]
   }
 
