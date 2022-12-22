@@ -27,18 +27,34 @@ const BookAppointment = (props) => {
   }
 
   const date = {
-    d:10,
+    D:10,
     m:12,
-    y:2022
+    y:2022,
+    d:"Wed"
+
   }
   const schedule = {
     clinicIDDate:"1_12-11-2022",
     timeSlots: [
-      {"7:00": ["e1@email.com", "e2@email.com"]},
-      {"7:30": ["e12@email.com", "e221@email.com", "e22@email.com"]},
-      {"8:00": ["e13@email.com"]},
-      {"8:30": ["e14@email.com"]},
-      {"8:00": []}
+      {time:"7:00",available:false},
+      {time:"7:00", available:false},
+      {time:"7:30", available:false},
+      {time:"8:00", available:false},
+      {time:"8:30", available:false},
+      {time:"9:00", available:false},
+      {time:"9:30", available:false},
+      {time:"10:00", available:false},
+      {time:"10:30", available:false},
+      {time:"11:00", available:false},
+      {time:"11:30", available:false},
+      //lunch
+      // {time:"12:00", available:false},
+      // {time:"12:30", available:false},
+      {time:"14:00", available:false},
+      {time:"14:30", available:false},
+      //fika
+      // {time:"15:00", available:false},
+      {time:"15:30", available:false},
     ]
   }
 
@@ -46,24 +62,27 @@ const BookAppointment = (props) => {
     dentists: 3,
     clinicIDDate:"1_12-11-2022",
     timeSlots: [
-      {time:"7:00", bookings: ["e1@email.com", "e2@email.com"]},
-      {time:"7:30", bookings: ["e12@email.com", "e221@email.com", "e22@email.com"]},
-      {time:"8:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
-      {time:"8:30", bookings: ["e13@email.com"]},
-      {time:"9:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
-      {time:"9:30", bookings: ["e13@email.com"]},
-      {time:"10:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
-      {time:"10:30", bookings: ["e13@email.com"]},
-      {time:"11:00", bookings: ["e13@email.com"]},
-      {time:"11:30", bookings: ["e13@email.com"]},
-      {time:"12:00", bookings: ["e13@email.com", "e221@email.com", "e22@email.com"]},
-      {time:"12:30", bookings: ["e13@email.com"]},
-      {time:"14:00", bookings: ["e13@email.com"]},
-      {time:"14:30", bookings: ["e13@email.com"]},
-      {time:"15:00", bookings: ["e13@email.com"]},
-      {time:"15:30", bookings: ["e13@email.com"]},
-      {time:"16:00", bookings: ["e13@email.com"]}
+      {time:"7:00",available:false},
+      {time:"7:00", available:false},
+      {time:"7:30", available:false},
+      {time:"8:00", available:false},
+      {time:"8:30", available:false},
+      {time:"9:00", available:false},
+      {time:"9:30", available:false},
+      {time:"10:00", available:false},
+      {time:"10:30", available:false},
+      {time:"11:00", available:false},
+      {time:"11:30", available:false},
+      //lunch
+      // {time:"12:00", available:false},
+      // {time:"12:30", available:false},
+      {time:"14:00", available:false},
+      {time:"14:30", available:false},
+      //fika
+      // {time:"15:00", available:false},
+      {time:"15:30", available:false},
     ]
+ 
   }
 
   return (
@@ -72,7 +91,7 @@ const BookAppointment = (props) => {
             <Row>
                 <Col>
                 <div className="card card-container">
-                    <h2>Available time slots for {date.d} {date.m} {date.y} </h2>
+                    <h3>Available time slots for {date.d} {date.D}.{date.m}.{date.y} </h3>
                         <BookAppointmentForm data={bookingFormInfo}/>
                     </div>
                 </Col>
@@ -81,14 +100,13 @@ const BookAppointment = (props) => {
                     <div className="card card-container">
                     <h2 className="card-title">{clinicData.name}</h2>
                     <div className="card-text">
-                        <p>Opening hours</p>
-                        <p>Monday: {clinicData.openinghours.monday}</p>
-                        <p>Tuesday: {clinicData.openinghours.tuesday}</p>
-                        <p>Wednesday: {clinicData.openinghours.wednesday}</p>
-                        <p>Thursday: {clinicData.openinghours.thursday}</p>
-                        <p>Friday: {clinicData.openinghours.friday}</p>
-                        <br></br>
-                        <p>Address</p>
+                        <h5>Opening hours</h5>
+                        <p> Monday: {clinicData.openinghours.monday}</p>
+                        <p> Tuesday: {clinicData.openinghours.tuesday}</p>
+                        <p> Wednesday: {clinicData.openinghours.wednesday}</p>
+                        <p> Thursday: {clinicData.openinghours.thursday}</p>
+                        <p> Friday: {clinicData.openinghours.friday}</p>
+                        <h5>Address</h5>
                         <p>{clinicData.address} {clinicData.city}</p>
                     </div>
                     
