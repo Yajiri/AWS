@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 
-
 import Home from './Home/Home'
 import DatePicker from './DatePicker/DatePicker'
 import Map from './Map/Map'

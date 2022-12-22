@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import ClinicCard from "./ClinicCard"
 import ClinicPoint from "./ClinicPoint"
+import Overview from '../Home/Overview'
 
 type MapPointProps = {
   name: string
@@ -33,6 +34,14 @@ const MapPoint = (props: MapPointProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [containerRef]);
+
+  useEffect(() => {
+    if (opened){
+      localStorage.setItem('clinic', JSON.stringify([props.name, props.dentists, props.address, props.city]));
+    } else {
+      localStorage.setItem('clinic', '')
+    }
+  }, [opened])
 
   return (<div ref={containerRef}>
     {opened ?

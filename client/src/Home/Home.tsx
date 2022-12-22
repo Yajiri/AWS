@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { Component } from 'react'
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries'
 
 import Navbar from '../Navbar/Navbar';
-import DatePicker from '../DatePicker/DatePicker'
 import Map from '../Map/Map'
+import DatePicker from '../DatePicker/DatePicker'
+import Overview from './Overview'
 
 const MainContainer = styled.div`
 height: 100vh;
@@ -18,16 +19,17 @@ h2,h3,h4,h5,h6{
 const Box = styled.div`
 text-align: center;
 padding-top: 6rem;
+
 @media (min-width: ${breakpoints.mobileMin}) {
+  margin-bottom: -2rem;
   padding-top: 5rem;
   padding-left: 2.5rem;
   padding-right: 2.5rem;
   text-align: left;
 }
-`
-
-const PickMe = styled.div`
-margin-left: -1;
+@media (min-width: ${breakpoints.tabletMin}) {
+  margin-bottom: -5rem;
+}
 `
 
 const Container = styled.div`
@@ -68,8 +70,6 @@ const Content1 = styled.div`
   width: 100%;
   height: 80%;
   @media (min-width: ${breakpoints.mobileMin}) {
-    margin-left: -50%;
-    width: 50%;
     align: left;
   }
   @media (min-width: ${breakpoints.tabletMin}) {
@@ -85,8 +85,17 @@ const Content2 = styled.div`
 `;
 const Content3 = styled(Content2)``;
 
-const Home = () => {
+const Button = styled.button`
+  /* Adapt the colors based on primary prop */
+  color: "palevioletred";
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid palevioletred;
+  border-radius: 3px;
+`;
 
+const Home = () => {
   return(
     <MainContainer>
       <Navbar />
@@ -98,25 +107,19 @@ const Home = () => {
         <ContentBox>
           <Content2>
             <h3>Choose a Clinic:</h3>
-            <Map center={{ lat: 57.7089, lng: 11.9746 }} zoom={13} />
+            <Map center={{ lat: 57.7017373, lng: 11.9707837 }} zoom={13} />
           </Content2>
           <Content1>
             <h3>Choose a Date:</h3>
             <DatePicker />
             <Content3>
-            <h3>Overview:</h3>
-            <h4>Date: DATE</h4>
-            <br />
-            <h3>Clinic Information</h3>
-            <h4>Name</h4>
-            <h4>Address</h4>
-            <h4>Dentists: </h4>
-            <h4>Opening hours:</h4>
+              <Overview />
+            <Button>Search Times</Button>
           </Content3>
           </Content1>
-          
         </ContentBox>
       </Container>
+
     </MainContainer>
     
   );

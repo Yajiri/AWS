@@ -1,8 +1,9 @@
-import * as React from "react";
-import dayjs, { Dayjs } from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { CalendarPicker } from "@mui/x-date-pickers/CalendarPicker";
+import * as React from 'react';
+import dayjs, { Dayjs } from 'dayjs';
+import TextField from '@mui/material/TextField';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 
 const isWeekend = (date: Dayjs) => {
   const day = date.day();
@@ -10,16 +11,21 @@ const isWeekend = (date: Dayjs) => {
   return day === 0 || day === 6;
 };
 
-export default function SubComponentsPickers() {
-  const [date, setDate] = React.useState<Dayjs | null>(dayjs());
-  console.log(date);
+export default function StaticDatePickerLandscape() {
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
+  console.log(value);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <CalendarPicker
-        date={date}
+      <StaticDatePicker
+        orientation="landscape"
+        openTo="day"
+        value={value}
         shouldDisableDate={isWeekend}
-        onChange={(newDate) => setDate(newDate)}
+        onChange={(newValue) => {
+          setValue(newValue);
+        }}
+        renderInput={(params) => <TextField {...params} />}
       />
     </LocalizationProvider>
   );
