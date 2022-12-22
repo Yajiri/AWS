@@ -15,34 +15,34 @@ Resources:
         openapi: '3.0'
         info: {}
         paths:
-          /clinics:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinic.Arn}/invocations
-              responses: {}
-          /clinics/{id}:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinics.Arn}/invocations
-              responses: {}
-          /clinics/{id}/appointments:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getAppointments.Arn}/invocations
-              responses: {}
+        #/clinics:
+        #  get:
+        #    x-amazon-apigateway-integration:
+        #      httpMethod: POST
+        #      type: aws_proxy
+        #      uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinic.Arn}/invocations
+        #    responses: {}
+        #/clinics/{id}:
+        #  get:
+        #    x-amazon-apigateway-integration:
+        #      httpMethod: POST
+        #      type: aws_proxy
+        #      uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinics.Arn}/invocations
+        #    responses: {}
+          /clinics/{clinicId}/appointments:
+          #get:
+          #  x-amazon-apigateway-integration:
+          #    httpMethod: POST
+          #    type: aws_proxy
+          #    uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getAppointments.Arn}/invocations
+          #  responses: {}
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
                 uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${bookAppointment.Arn}/invocations
               responses: {}
-          /clinics/{id}/appointments/{id}:
+          /clinics/{clinicId}/appointments/{appointmentId}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -58,108 +58,110 @@ Resources:
       EndpointConfiguration: REGIONAL
       TracingEnabled: true
       Cors:
-        AllowOrigins:
-          - ''
-  getClinic:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: getClinic
-      CodeUri: src/Function
-      Handler: index.handler
-      Runtime: nodejs12.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Events:
-        dentistimoGETclinics:
-          Type: Api
-          Properties:
-            Path: /clinics
-            Method: GET
-            RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref table
-  getClinicLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${getClinic}
-  getClinics:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: getClinics
-      CodeUri: src/Function2
-      Handler: index.handler
-      Runtime: nodejs12.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Events:
-        dentistimoGETclinicsid:
-          Type: Api
-          Properties:
-            Path: /clinics/{id}
-            Method: GET
-            RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref table
-  getClinicsLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${getClinics}
-  getAppointments:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: getAppointments
-      CodeUri: src/Function2
-      Handler: index.handler
-      Runtime: nodejs12.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Events:
-        dentistimoGETclinicsidappointments:
-          Type: Api
-          Properties:
-            Path: /clinics/{id}/appointments
-            Method: GET
-            RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref table
-  getAppointmentsLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${getAppointments}
+        AllowMethods: "'POST'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'600'"
+  #getClinic:
+  #  Type: AWS::Serverless::Function
+  #  Properties:
+  #    Description: !Sub
+  #      - Stack ${AWS::StackName} Function ${ResourceName}
+  #      - ResourceName: getClinic
+  #    CodeUri: src/Function
+  #    Handler: index.handler
+  #    Runtime: nodejs12.x
+  #    MemorySize: 3008
+  #    Timeout: 30
+  #    Tracing: Active
+  #    Events:
+  #      dentistimoGETclinics:
+  #        Type: Api
+  #        Properties:
+  #          Path: /clinics
+  #          Method: GET
+  #          RestApiId: !Ref dentistimo
+  #    Environment:
+  #      Variables:
+  #        TABLE_NAME: !Ref table
+  #        TABLE_ARN: !GetAtt table.Arn
+  #    Policies:
+  #      - DynamoDBCrudPolicy:
+  #          TableName: !Ref table
+  #getClinicLogGroup:
+  #  Type: AWS::Logs::LogGroup
+  #  DeletionPolicy: Retain
+  #  Properties:
+  #    LogGroupName: !Sub /aws/lambda/${getClinic}
+  #getClinics:
+  #  Type: AWS::Serverless::Function
+  #  Properties:
+  #    Description: !Sub
+  #      - Stack ${AWS::StackName} Function ${ResourceName}
+  #      - ResourceName: getClinics
+  #    CodeUri: src/Function2
+  #    Handler: index.handler
+  #    Runtime: nodejs12.x
+  #    MemorySize: 3008
+  #    Timeout: 30
+  #    Tracing: Active
+  #    Events:
+  #      dentistimoGETclinicsid:
+  #        Type: Api
+  #        Properties:
+  #          Path: /clinics/{id}
+  #          Method: GET
+  #          RestApiId: !Ref dentistimo
+  #    Environment:
+  #      Variables:
+  #        TABLE_NAME: !Ref table
+  #        TABLE_ARN: !GetAtt table.Arn
+  #    Policies:
+  #      - DynamoDBCrudPolicy:
+  #          TableName: !Ref table
+  #getClinicsLogGroup:
+  #  Type: AWS::Logs::LogGroup
+  #  DeletionPolicy: Retain
+  #  Properties:
+  #    LogGroupName: !Sub /aws/lambda/${getClinics}
+  #getAppointments:
+  #  Type: AWS::Serverless::Function
+  #  Properties:
+  #    Description: !Sub
+  #      - Stack ${AWS::StackName} Function ${ResourceName}
+  #      - ResourceName: getAppointments
+  #    CodeUri: src/Function2
+  #    Handler: index.handler
+  #    Runtime: nodejs12.x
+  #    MemorySize: 3008
+  #    Timeout: 30
+  #    Tracing: Active
+  #    Events:
+  #      dentistimoGETclinicsidappointments:
+  #        Type: Api
+  #        Properties:
+  #          Path: /clinics/{id}/appointments
+  #          Method: GET
+  #          RestApiId: !Ref dentistimo
+  #    Environment:
+  #      Variables:
+  #        TABLE_NAME: !Ref table
+  #        TABLE_ARN: !GetAtt table.Arn
+  #    Policies:
+  #      - DynamoDBCrudPolicy:
+  #          TableName: !Ref table
+  #getAppointmentsLogGroup:
+  #  Type: AWS::Logs::LogGroup
+  #  DeletionPolicy: Retain
+  #  Properties:
+  #    LogGroupName: !Sub /aws/lambda/${getAppointments}
   getAppointment:
     Type: AWS::Serverless::Function
     Properties:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getAppointment
-      CodeUri: src/ReadFromDDB
+      CodeUri: s3://dentistimo/ReadFromDDB.zip
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -169,8 +171,8 @@ Resources:
         dentistimoGETclinicsidappointmentsid:
           Type: Api
           Properties:
-            Path: /clinics/{id}/appointments/{id}
-            Method: GET
+            Path: /clinics/{clinicId}/appointments/{appointmentId}
+            Method: POST
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
@@ -190,7 +192,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointment
-      CodeUri: src/WriteToEB
+      CodeUri: s3://dentistimo/WriteToEB.zip
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -200,7 +202,7 @@ Resources:
         dentistimoPOSTclinicsidappointments:
           Type: Api
           Properties:
-            Path: /clinics/{id}/appointments
+            Path: /clinics/{clinicId}/appointments
             Method: POST
             RestApiId: !Ref dentistimo
       Environment:
@@ -220,7 +222,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: cancelAppointment
-      CodeUri: src/DeleteFromEB
+      CodeUri: s3://dentistimo/DeleteFromEB.zip
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -230,8 +232,8 @@ Resources:
         dentistimoDELETEclinicsidappointmentsid:
           Type: Api
           Properties:
-            Path: /clinics/{id}/appointments/{id}
-            Method: DELETE
+            Path: /clinics/{clinicId}/appointments/{appointmentId}
+            Method: POST
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
@@ -250,7 +252,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: cancelAppointmentDDB
-      CodeUri: src/DeleteFromDDB
+      CodeUri: s3://dentistimo/DeleteFromDDB.zip
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -274,7 +276,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointmentDDB
-      CodeUri: src/WriteToDDB
+      CodeUri: s3://dentistimo/WriteToDDB.zip
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -344,9 +346,9 @@ Metadata:
       Label: Group
       Members:
         - getAppointment
-        - getAppointments
-        - getClinics
-        - getClinic
+    #    - getAppointments
+    #    - getClinics
+    #    - getClinic
     Group2:
       Label: Group2
       Members:
