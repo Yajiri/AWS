@@ -8,12 +8,13 @@ type ClinicPointProps = {
 const styles = makeStyles({
   root:{
     background: 'white',
+    border: 1,
+    borderColor: 'black',
     borderRadius: '5px',
     padding: '10px',
     width: '60px',
     zIndex: 1000,
-    position: 'relative',
-    borderColor: 'blue'
+    position: 'relative'
   }
 })
 

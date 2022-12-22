@@ -21,6 +21,7 @@ export default function StaticDatePickerLandscape() {
         orientation="landscape"
         openTo="day"
         value={value}
+        
         shouldDisableDate={isWeekend}
         onChange={(newValue) => {
           setValue(newValue);
