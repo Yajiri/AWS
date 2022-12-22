@@ -16,5 +16,3 @@ ddb.getItem(params, (err, data) => {
     }
     console.log(data);
 })
-
-//Need to make sure this works, with Ella
