@@ -62,7 +62,7 @@ const BookAppointment = (props) => {
     dentists: 3,
     clinicIDDate:"1_12-11-2022",
     timeSlots: [
-      {time:"7:00",available:false},
+      {time:"7:00",available:true},
       {time:"7:00", available:false},
       {time:"7:30", available:false},
       {time:"8:00", available:false},

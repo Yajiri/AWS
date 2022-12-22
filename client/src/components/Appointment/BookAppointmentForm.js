@@ -1,18 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useFormik } from 'formik'
-
+const validator = require('validator');
 
 class BookAppointmentForm extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             timeSlots : props.data.timeSlots,
-            seletedTime: '',
+            seletedTime: '#',
             email: '',
             clinicIDDate: props.data.clinicIDDate,
             dentists: props.data.dentists,
@@ -21,6 +20,7 @@ class BookAppointmentForm extends React.Component {
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.validateEmail = this.validateEmail.bind(this);
     }
 
     handleChange(event) {
@@ -37,21 +37,22 @@ class BookAppointmentForm extends React.Component {
         event.preventDefault();
         this.setState({loading:true});
         this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'})
-        console.log (this.seletedTime + " " + this.email + " " + this.clinicIDDate +" ")
+        console.log (this.state.seletedTime + " " + this.state.email + " " + this.state.clinicIDDate +" ")
         // await axios.post(
         //   '',
         //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
         // );
     }
 
-    validateEmail(email){
-        const errors = {};
-        const regEx=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        if (regEx.test(email)){
-          console.log('Invalid email address')
-        }
+    validateEmail(event){
+        // const errors = {};
+        // const regEx=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        // if (regEx.test(email)){
+        //   console.log('Invalid email address')
+        // }
+        event.preventDefault();
       
-        return errors
+        console.log(validator.isEmail(this.state.email))     // true
      }
 
      checkAvailabitily(timeSlots){
@@ -129,7 +130,11 @@ class BookAppointmentForm extends React.Component {
                                     onChange={this.handleChange}
                                     required
                                 />
+                                
                         </div>
+                        <button className="btn btn-outline-info" onClick={this.validateEmail}>                 
+                                    <span>Check</span>
+                                </button>
 
 
                         <div className="form-group">
