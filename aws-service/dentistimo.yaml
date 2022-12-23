@@ -58,11 +58,10 @@ Resources:
       EndpointConfiguration: REGIONAL
       TracingEnabled: true
       Cors:
-        AllowMethods: "'POST'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-        MaxAge: "'600'"
-
+        AllowMethods: '''POST, GET, DELETE'''
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+        AllowOrigin: '''*'''
+        MaxAge: '''600'''
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -76,10 +75,10 @@ Resources:
       Timeout: 30
       Tracing: Active
       Events:
-        dentistimoGETclinics:
+        dentistimoGETclinicsid:
           Type: Api
           Properties:
-            Path: /clinics
+            Path: /clinics/{clinicId}
             Method: GET
             RestApiId: !Ref dentistimo
       Environment:
@@ -107,10 +106,10 @@ Resources:
       Timeout: 30
       Tracing: Active
       Events:
-        dentistimoGETclinicsid:
+        dentistimoGETclinics:
           Type: Api
           Properties:
-            Path: /clinics/{clinicId}
+            Path: /clinics/
             Method: GET
             RestApiId: !Ref dentistimo
       Environment:
