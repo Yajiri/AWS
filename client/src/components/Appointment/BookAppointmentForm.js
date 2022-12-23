@@ -11,30 +11,38 @@ class BookAppointmentForm extends React.Component {
         super(props);
         this.state = {
             timeSlots : props.data.timeSlots,
-            seletedTime: '#',
+            seletedTime: '',
             email: '',
             clinicIDDate: props.data.clinicIDDate,
             dentists: props.data.dentists,
             loading: false,
+            inputIsValid: false,
             response : ''
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
+        this.checkInputNotNull = this.checkInputNotNull.bind(this);
     }
 
     handleChange(event) {
         const value = event.target.value;
         const field = event.target.name;
+        const check = this.checkInputNotNull();
 
         this.setState({
             [field]: value
         });
-        console.log(field + " " + value)
+
+        this.setState({inputIsValid:check});
+        console.log(field + " " + value);
+        console.log(this.state.inputIsValid);
     }
 
     handleSubmit(event) {
         event.preventDefault();
+        console.log(event);
+        console.log(this.checkInputNotNull())
         this.setState({loading:true});
         this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'})
         console.log (this.state.seletedTime + " " + this.state.email + " " + this.state.clinicIDDate +" ")
@@ -44,15 +52,14 @@ class BookAppointmentForm extends React.Component {
         // );
     }
 
-    validateEmail(event){
+    validateEmail(){
         // const errors = {};
         // const regEx=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         // if (regEx.test(email)){
         //   console.log('Invalid email address')
         // }
-        event.preventDefault();
       
-        console.log(validator.isEmail(this.state.email))     // true
+        return(validator.isEmail(this.state.email))  
      }
 
      checkAvailabitily(timeSlots){
@@ -64,6 +71,10 @@ class BookAppointmentForm extends React.Component {
 
         }
         return isAvailable;
+     }
+
+     checkInputNotNull(){
+        return(this.state.seletedTime!== "" && this.validateEmail())
      }
 
       render(){
@@ -110,8 +121,8 @@ class BookAppointmentForm extends React.Component {
                     {this.checkAvailabitily(this.state.timeSlots) && (
                         <>
                             <div className="form-group">
-                            <label htmlFor="seelctedTime">Select a slot*</label>
-                            <Form.Select name="selectedTime" onChange={this.handleChange}>
+                            <label htmlFor="seletedTime">Select a slot*</label>
+                            <Form.Select name="seletedTime" onChange={this.handleChange}>
                                 {this.state.timeSlots.map(slot => {
                                     if(slot.available)
                                         return <option key={slot.time} name={slot.time} value={slot.time}>{slot.time}</option>
@@ -132,13 +143,10 @@ class BookAppointmentForm extends React.Component {
                                 />
                                 
                         </div>
-                        <button className="btn btn-outline-info" onClick={this.validateEmail}>                 
-                                    <span>Check</span>
-                                </button>
 
-
+                      
                         <div className="form-group">
-                        <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={this.state.loading}> 
+                        <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.state.inputIsValid}> 
                         
                             {this.state.loading && (
                             <span className="spinner-border spinner-border-sm"></span>
@@ -151,7 +159,7 @@ class BookAppointmentForm extends React.Component {
                     )}
                     
 
-                    <button className="btn btn-outline-info" onClick={this.handleSubmit}>                 
+                    <button className="btn btn-outline-info" >                 
                         <span>Return to date&clinic selection</span>
                     </button>
 
