@@ -1,7 +1,7 @@
-import { Api } from '../services/Api'
+import { Api } from './Api'
 
 export const testApi = {
   postTest: (data) => {
-    Api.post(`/dentistimotest`, data)
+    Api.post(`/healthcheck`, data)
   }
 }

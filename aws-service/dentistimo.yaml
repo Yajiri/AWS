@@ -1,5 +1,9 @@
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  dentistimoEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: dentistimoEventBus
   dentistimo:
     Type: AWS::Serverless::Api
     Properties:
@@ -36,7 +40,7 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${addAppointment.Arn}/invocations
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${bookAppointment.Arn}/invocations
               responses: {}
           /clinics/{id}/appointments/{id}:
             get:
@@ -49,48 +53,13 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${deleteAppointment.Arn}/invocations
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${cancelAppointment.Arn}/invocations
               responses: {}
       EndpointConfiguration: REGIONAL
       TracingEnabled: true
       Cors:
         AllowOrigins:
           - ''
-  EventRule:
-    Type: AWS::Events::Rule
-    Properties:
-      EventPattern:
-        source:
-          - aws.health
-  Function4:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: Function4
-      CodeUri: src/Function4
-      Handler: index.handler
-      Runtime: nodejs18.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-  Function4LogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${Function4}
-  Table:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      BillingMode: PAY_PER_REQUEST
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -110,6 +79,13 @@ Resources:
             Path: /clinics
             Method: GET
             RestApiId: !Ref dentistimo
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
   getClinicLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -134,35 +110,18 @@ Resources:
             Path: /clinics/{id}
             Method: GET
             RestApiId: !Ref dentistimo
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
   getClinicsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${getClinics}
-  addAppointment:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: addAppointment
-      CodeUri: src/Function2
-      Handler: index.handler
-      Runtime: nodejs12.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Events:
-        dentistimoPOSTclinicsidappointments:
-          Type: Api
-          Properties:
-            Path: /clinics/{id}/appointments
-            Method: POST
-            RestApiId: !Ref dentistimo
-  addAppointmentLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${addAppointment}
   getAppointments:
     Type: AWS::Serverless::Function
     Properties:
@@ -182,6 +141,13 @@ Resources:
             Path: /clinics/{id}/appointments
             Method: GET
             RestApiId: !Ref dentistimo
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
   getAppointmentsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -193,7 +159,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getAppointment
-      CodeUri: src/Function2
+      CodeUri: src/ReadFromDDB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -206,18 +172,55 @@ Resources:
             Path: /clinics/{id}/appointments/{id}
             Method: GET
             RestApiId: !Ref dentistimo
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
   getAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${getAppointment}
-  deleteAppointment:
+  bookAppointment:
     Type: AWS::Serverless::Function
     Properties:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: deleteAppointment
-      CodeUri: src/Function2
+        - ResourceName: bookAppointment
+      CodeUri: src/WriteToEB
+      Handler: index.handler
+      Runtime: nodejs12.x
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Events:
+        dentistimoPOSTclinicsidappointments:
+          Type: Api
+          Properties:
+            Path: /clinics/{id}/appointments
+            Method: POST
+            RestApiId: !Ref dentistimo
+      Environment:
+        Variables:
+          EVENTBUS: !Ref dentistimoEventBus
+      Policies:
+        - EventBridgePutEventsPolicy:
+            EventBusName: dentistimoEventBus
+  bookAppointmentLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${bookAppointment}
+  cancelAppointment:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: cancelAppointment
+      CodeUri: src/DeleteFromEB
       Handler: index.handler
       Runtime: nodejs12.x
       MemorySize: 3008
@@ -230,19 +233,139 @@ Resources:
             Path: /clinics/{id}/appointments/{id}
             Method: DELETE
             RestApiId: !Ref dentistimo
-  deleteAppointmentLogGroup:
+      Environment:
+        Variables:
+          EVENTBUS: !Ref dentistimoEventBus
+      Policies:
+        - EventBridgePutEventsPolicy:
+            EventBusName: dentistimoEventBus
+  cancelAppointmentLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
-      LogGroupName: !Sub /aws/lambda/${deleteAppointment}
+      LogGroupName: !Sub /aws/lambda/${cancelAppointment}
+  cancelAppointmentDDB:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: cancelAppointmentDDB
+      CodeUri: src/DeleteFromDDB
+      Handler: index.handler
+      Runtime: nodejs12.x
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
+  cancelAppointmentDDBLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${cancelAppointmentDDB}
+  bookAppointmentDDB:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: bookAppointmentDDB
+      CodeUri: src/WriteToDDB
+      Handler: index.handler
+      Runtime: nodejs12.x
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table
+          TABLE_ARN: !GetAtt table.Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table
+  bookAppointmentDDBLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${bookAppointmentDDB}
+  eventBook:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - aws.health
+      EventBusName: dentistimoEventBus
+      Targets:
+        - Id: !Ref bookAppointmentDDB
+          Arn: !GetAtt bookAppointmentDDB.Arn
+  eventBookTobookAppointmentDDBPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt bookAppointmentDDB.Arn
+      Principal: !Sub events.${AWS::URLSuffix}
+      SourceArn: !GetAtt eventBook.Arn
+  eventCancel:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - aws.health
+      EventBusName: dentistimoEventBus
+      Targets:
+        - Id: !Ref cancelAppointmentDDB
+          Arn: !GetAtt cancelAppointmentDDB.Arn
+  eventCancelTocancelAppointmentDDBPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt cancelAppointmentDDB.Arn
+      Principal: !Sub events.${AWS::URLSuffix}
+      SourceArn: !GetAtt eventCancel.Arn
+  table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
 Metadata:
   AWS::Composer::Groups:
     Group:
-      Label: API
+      Label: Group
       Members:
-        - getClinic
-        - getClinics
-        - getAppointments
-        - addAppointment
         - getAppointment
-        - deleteAppointment
+        - getAppointments
+        - getClinics
+        - getClinic
+    Group2:
+      Label: Group2
+      Members:
+        - Group4
+        - Group3
+        - Group5
+    Group3:
+      Label: Group3
+      Members:
+        - cancelAppointmentDDB
+        - bookAppointmentDDB
+    Group4:
+      Label: Group4
+      Members:
+        - eventBook
+        - dentistimoEventBus
+        - eventCancel
+    Group5:
+      Label: Group5
+      Members:
+        - bookAppointment
+        - cancelAppointment
