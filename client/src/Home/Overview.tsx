@@ -1,6 +1,5 @@
 import React, { Component, useState, useEffect } from 'react'
 import styled from 'styled-components';
-import { breakpoints } from '../MediaQueries'
 
 const Content1 = styled.div`
   padding: 0.5rem;
@@ -25,6 +24,7 @@ address: string
 city: string
 }
 
+
 const Home = () => {
   const [data, setClinic] = useState([]);
   const [selectedDate, setDate] = useState();
@@ -39,11 +39,19 @@ const Home = () => {
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
-      setClinic(selectedDate);
+      setDate(selectedDate);
     }
   }, [selectedDate])
 
-  console.log("clinic: " + data + "")
+  let handleClick = false;
+
+  if (data[1] > 0) {
+    //console.log("I am clickable");
+    handleClick = false;
+  } else {
+   //console.log("I am not clickable");
+    handleClick = true;
+  }
 
   /* If there is no selected clinic or no selected date, the button should be disabled
   ** if (!data || !selectedDate)
@@ -57,7 +65,7 @@ const Home = () => {
         <h4>Address: {data[2]}, {data[3]}</h4>
         <h4>Dentists: {data[1]}</h4>        
         <h4>Opening hours:</h4>
-        <Button>Search Times</Button>
+        <Button disabled={handleClick}>Search Times</Button>
     </Content1>
   );
 }
