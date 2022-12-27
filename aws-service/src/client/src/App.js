@@ -10,7 +10,8 @@ import logo from './assets/images/logo.svg';
 import { AnimatePresence } from "framer-motion";
 
 import Home from './pages/home/Home';
-import Appointments from './pages/appointments/Appointments';
+//import Appointments from './pages/appointments/Appointments';
+import BookAppointment from './pages/appointments/BookAppointment'
 import Profile from './pages/profile/Profile';
 import NotFound from './layouts/NotFound';
 
@@ -23,7 +24,7 @@ function App() {
     <logo> </logo>
     <Routes location={location} key ={location.pathname}>
       <Route exact path="/" element={<Home />}/>
-      <Route exact path="/appointments" element={<Appointments />}/>
+      <Route exact path="/book-appointment" element={<BookAppointment />}/>
       <Route exact path="/profile" element={<Profile />}/>
       <Route path='*' element={<NotFound />} />
     </Routes>
