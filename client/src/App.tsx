@@ -23,7 +23,7 @@ function App() {
         <BookAppointment />
       </Wrapper>
       <Routes>
-      <Route path='/appointments' element={<BookAppointment />}></Route>
+        <Route path='/appointments' element={<BookAppointment />}/>
       </Routes>
       </Router>
       

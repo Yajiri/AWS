@@ -4,8 +4,10 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import * as EmailValidator from 'email-validator';
+import "bootstrap/dist/css/bootstrap.min.css"
 
-const validator = require('validator');
+// const validator = require('validator');
 
 class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
@@ -59,8 +61,9 @@ class BookAppointmentForm extends React.Component<any,any> {
         // if (regEx.test(email)){
         //   console.log('Invalid email address')
         // }
-      
-        return(validator.isEmail(this.state.email))  
+        console.log("test: " + this.state.email)
+        // return(validator.isEmail(this.state.email))  
+        return EmailValidator.validate(this.state.email)
      }
 
      checkAvailabitily(timeSlots:any){
@@ -68,6 +71,7 @@ class BookAppointmentForm extends React.Component<any,any> {
         for(const element of timeSlots){
             if(element.available===true){
                 isAvailable=true;
+                console.log(element)
             }
 
         }
@@ -87,9 +91,9 @@ class BookAppointmentForm extends React.Component<any,any> {
                         <Container>
                             <Col>
                             
-                                {/* <Row>
+                                <Row>
                                     { this.checkAvailabitily(this.state.timeSlots) ? (
-                                        <>{this.state.timeSlots.map((slot) => {
+                                        <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
                                             if(slot.available)
                                                 return <Col>
                                                             <Row>
@@ -115,7 +119,7 @@ class BookAppointmentForm extends React.Component<any,any> {
                                     }
                                         
                                     
-                                </Row> */}
+                                </Row>
                             </Col>
                         </Container>
                     </div>
@@ -125,11 +129,15 @@ class BookAppointmentForm extends React.Component<any,any> {
                             <div className="form-group">
                             <label htmlFor="seletedTime">Select a slot*</label>
                             <Form.Select name="seletedTime" onChange={this.handleChange}>
-                                {/* {this.state.timeSlots.map(slot => {
-                                    if(slot.available)
-                                        return <option key={slot.time} value={slot.time}>{slot.time}</option>
+                                <option id={"11:30"} value={"11:30"}>11:30</option>
+                                <option id={"14:30"} value={"11:30"}>14:30</option>
+                                {this.state.timeSlots.forEach((slot: { available: boolean; time: string; }) => {
+                                    if(slot.available){
+                                        console.log(slot.time)
+                                        return <option value={slot.time}>{slot.time}</option>
                                     }
-                                )} */}
+                                    }
+                                )}
                             </Form.Select>
                         </div>
 
