@@ -20,9 +20,8 @@ const MapPoint = (props: MapPointProps) => {
     console.log(props.name);
   }
   
-  
-  
-  useEffect(() => {
+  /**
+   * useEffect(() => {
     function handleClickOutside(this: Document, event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpened(false)
@@ -34,6 +33,8 @@ const MapPoint = (props: MapPointProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [containerRef]);
+   * 
+   */
 
   useEffect(() => {
     if (opened){
