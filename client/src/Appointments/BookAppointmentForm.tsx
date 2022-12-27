@@ -129,11 +129,8 @@ class BookAppointmentForm extends React.Component<any,any> {
                             <div className="form-group">
                             <label htmlFor="seletedTime">Select a slot*</label>
                             <Form.Select name="seletedTime" onChange={this.handleChange}>
-                                <option id={"11:30"} value={"11:30"}>11:30</option>
-                                <option id={"14:30"} value={"11:30"}>14:30</option>
-                                {this.state.timeSlots.forEach((slot: { available: boolean; time: string; }) => {
+                                {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
                                     if(slot.available){
-                                        console.log(slot.time)
                                         return <option value={slot.time}>{slot.time}</option>
                                     }
                                     }

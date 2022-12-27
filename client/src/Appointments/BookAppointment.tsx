@@ -104,10 +104,10 @@ const BookAppointment = () => {
       // {time:"12:00", available:false},
       // {time:"12:30", available:false},
       {time:"14:00", available:false},
-      {time:"14:30", available:false},
+      {time:"14:30", available:true},
       //fika
       // {time:"15:00", available:false},
-      {time:"15:30", available:true},
+      {time:"15:30", available:false},
     ]
  
   }
