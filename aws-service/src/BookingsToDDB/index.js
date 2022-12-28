@@ -1,6 +1,7 @@
 'use strict'  
 const AWS = require('aws-sdk'); 
-const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});  
+const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});
+// lines 1-50 written by Jens  
 exports.handler = function(event, context, callback) {     
     let params = {         
         TableName : "DentistimoBookings",         
@@ -48,8 +49,8 @@ const addNewBooking = function(event, context, callback) {
     }) 
 }
 
+//lines 53-82 written by Julia
 const numOfDentist = async function(event) {
-    
     let num = -1;
     let params = {         
         TableName : "DentistimoClinicsTable",         
