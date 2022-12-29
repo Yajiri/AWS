@@ -6,18 +6,31 @@ const AWS = require('aws-sdk');
 exports.handler = async(event, context, callback) => {
     const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
     let newEntry={};
+    let timeSlotsAvailability = {};
 
     const paramsBooking = {
         TableName : "DentistimoBookings",         
         Key: {             
             ClinicId: {
-                S: event.ClinicId
+                S: event.pathParameters.clinicId 
                 },             
             "Date":{ 
-                S: event.Date
+                N: event.pathParameters.date 
             },
         } 
-    };
+    }; 
+    
+    // const paramsBooking = {
+    //     TableName : "DentistimoV2-DentistimoScheduleAppointmentsTable-PF9T2SNRLUT9",         
+    //     Key: {             
+    //         ClinicId: {
+    //             S: event.ClinicId
+    //             },             
+    //         "Date":{ 
+    //             S: event.Date
+    //         },
+    //     } 
+    // };
     
     const paramsClinic = { TableName: "DentistimoClinicsTable",
     Key: {
@@ -82,7 +95,9 @@ exports.handler = async(event, context, callback) => {
             if(startH % 1 === 0.5)
                  t += ":30"
             else
-                 t += ":00"             
+                 t += ":00" 
+            //timeSlots[i] = { time:t, available:true}
+            
             if(t!=="14:30" && t!=="12:00" && t!=="12:30"){
                 timeSlots[i] = {"time":t, "available":true}
                 i++
@@ -97,9 +112,63 @@ exports.handler = async(event, context, callback) => {
             timeSlots: timeSlots
             }
         console.log(newEntry)
+        
+        return {
+            statusCode : 200,
+            headers: {
+                "Content-Type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                    "Access-Control-Allow-Methods" : "OPTIONS,GET",
+                    "Access-Control-Allow-Credentials" : true,
+                    "Access-Control-Allow-Origin" : "",
+                    "X-Requested-With" : "*"
+            },
+            body: newEntry
+        
+        };
             
     } else if(JSON.stringify(responseBooking)===null) {
         console.log("get booking response is null")
+    } else {
+        
+        const t = responseBooking.Item.TimeSlots.L
+        const slots = []
+        let i = 0
+        console.log("dentists" + responseClinic.Item.dentists.N)
+        t.forEach(slot => {
+            const bookings = slot.M.bookings.L
+            // console.log(bookings)
+            // console.log(bookings.length)
+            
+            
+            if(bookings.length < responseClinic.Item.dentists.N){
+                slots[i] = {"time":slot.M.time.S, "available":true}
+                i++
+            } else {
+                console.log(slot.M.time.S)
+                slots[i] = {"time":slot.M.time.S, "available":false}
+                i++
+            }
+        })
+        timeSlotsAvailability = {
+            clinicId: event.ClinicId,
+            date: event.Date,
+            timeSlots: slots
+            }
+        return {
+            statusCode : 200,
+            headers: {
+                "Content-Type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                    "Access-Control-Allow-Methods" : "OPTIONS,GET",
+                    "Access-Control-Allow-Credentials" : true,
+                    "Access-Control-Allow-Origin" : "",
+                    "X-Requested-With" : "*"
+            },
+            body: timeSlotsAvailability
+        
+        };
     }
 
 }
+
