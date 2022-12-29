@@ -35,7 +35,7 @@ exports.handler = async(event, context, callback) => {
     const paramsClinic = { TableName: "DentistimoClinicsTable",
     Key: {
         id:{
-            N:event.ClinicId
+            N:event.pathParameters.clinicId 
         },
     }
         
@@ -49,9 +49,9 @@ exports.handler = async(event, context, callback) => {
         const openingHours = responseClinic.Item.openinghours.M
         console.log(openingHours)
         
-        const y = event.Date.slice(0,4)
-        const m = event.Date.slice(4,6)
-        const d = event.Date.slice(6,8)
+        const y = event.pathParameters.date.slice(0,4)
+        const m = event.pathParameters.date.slice(4,6)
+        const d = event.pathParameters.date.slice(6,8)
         
         const ymd = y + "-" + m + "-" + d
         
@@ -107,8 +107,8 @@ exports.handler = async(event, context, callback) => {
         }
         
         newEntry = {
-            clinicId: event.ClinicId,
-            date: event.Date,
+            clinicId: event.pathParameters.clinicId,
+            date: event.pathParameters.date,
             timeSlots: timeSlots
             }
         console.log(newEntry)
@@ -151,8 +151,8 @@ exports.handler = async(event, context, callback) => {
             }
         })
         timeSlotsAvailability = {
-            clinicId: event.ClinicId,
-            date: event.Date,
+            clinicId: event.pathParameters.clinicId ,
+            date: event.pathParameters.date,
             timeSlots: slots
             }
         return {
