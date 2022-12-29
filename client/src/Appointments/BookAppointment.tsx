@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Navbar from "../Navbar/Navbar";
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
+import {clinicApi} from '../services/clinic'
 
 const MainContainer = styled.div`
 height: 100vh;
@@ -31,27 +32,51 @@ padding-top: 6rem;
   margin-bottom: -5rem;
 }
 `
+type clinicData =  {
+  clinicId: {N: number},
+  name: {S: string},
+  address: {S: string},
+  city: {S: string},
+  coordinate: {S: string},
+  openinghours: {S: string},
+  dentists: {S: string},
+  owner: {S: string},
+};
+
+//let data : clinicData
+
 const BookAppointment = () => {
- 
-  const clinicData = {
-    id: 1,
-    name: "Your Dentist",
-    owner: "Dan Tist",
-    dentists: 3,
-    address: "Spannmålsgatan 20",
-    city: "Gothenburg",
-    coordinate: {
-      "longitude": 11.969388,
-      "latitude": 57.707619
-    },
-    openinghours: {
-      "monday": "9:00-17:00",
-      "tuesday": "8:00-17:00",
-      "wednesday": "7:00-16:00",
-      "thursday": "9:00-17:00",
-      "friday": "9:00-15:00"
-    }
+  function getClinic()  {
+    //let clinicMetaData : string
+    let s = clinicApi.getClinic("1")
+    // let clinicMetaData = s+"";
+    // data = JSON.parse(clinicMetaData)
+    console.log("This is from API gateway");
+    return s;
+    
+    // console.log(data);
+    // return data;
   }
+
+  // const clinicData = {
+  //   id: 1,
+  //   name: "Your Dentist",
+  //   owner: "Dan Tist",
+  //   dentists: 3,
+  //   address: "Spannmålsgatan 20",
+  //   city: "Gothenburg",
+  //   coordinate: {
+  //     "longitude": 11.969388,
+  //     "latitude": 57.707619
+  //   },
+  //   openinghours: {
+  //     "monday": "9:00-17:00",
+  //     "tuesday": "8:00-17:00",
+  //     "wednesday": "7:00-16:00",
+  //     "thursday": "9:00-17:00",
+  //     "friday": "9:00-15:00"
+  //   }
+  // }
 
   const date = {
     D:10,
@@ -127,8 +152,10 @@ const BookAppointment = () => {
 
                 <Col>
                     <div className="card card-container">
-                    <h2 className="card-title">{clinicData.name}</h2>
+                    <h2 className="card-title">test</h2>
                     <div className="card-text">
+                    <button className="btn btn-primary btn-block" onClick={() => getClinic()}>Test get clinic</button>
+{/* 
                         <h5>Opening hours</h5>
                         <p> Monday: {clinicData.openinghours.monday}</p>
                         <p> Tuesday: {clinicData.openinghours.tuesday}</p>
@@ -137,9 +164,9 @@ const BookAppointment = () => {
                         <p> Friday: {clinicData.openinghours.friday}</p>
                         <h5>Address</h5>
                         <p>{clinicData.address} {clinicData.city}</p>
-                    </div>
+                    </div> */}
                     
-                    </div>
+                    </div></div>
                     
                 </Col>
             </Row>
