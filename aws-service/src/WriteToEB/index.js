@@ -34,5 +34,4 @@ exports.handler = async (event, context, callback) => {
   // Publish to EventBridge
   const result = await eventBridge.putEvents(params).promise()
   console.log(result)
-    
 };

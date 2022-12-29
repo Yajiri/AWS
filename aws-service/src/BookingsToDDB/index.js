@@ -12,17 +12,24 @@ exports.handler = function(event, context, callback) {
     }  
     documentClient.get(params, async function(err, data){
         console.log("inside parent func");
+        // Stores number of dentist for given clinic
         let dentists = await numOfDentist(event);
         console.log(dentists);
         if(data.Item == null) {
             console.log("new item created");
+            // Adds new record if clinic and date do not exist
             addNewBooking(event, context, callback);       
-            callback(err, null);     
+            callback(err, null);   
+            // If record for clinic and date exist   
         }  else if (data.Item) {  
-        callback(null, data);
-        console.log("added to array");
-        console.log(data)
-        console.log(JSON.stringify(data))
+            // loop through entire record
+            // check if event.time = data.Item.timeslots[timeval] then store into new array
+            // if emails for time < dentists then append
+            // else return err
+            callback(null, data);
+            console.log("added to array");
+            console.log(data);
+            console.log(JSON.stringify(data));
         } 
     }) 
 }
@@ -81,14 +88,29 @@ const numOfDentist = async function(event) {
     // then calls res/rej funcs, which trigger handlers depending on res or rej
     return num;
 }
+
+const updateBooking = function(event) {  
+    // loop through entire record
+    let row = { };
+    let list = data.Item;
+
+    list.forEach( list => {
+        if (row.)
+    })
+    // check if event.time = data.Item.timeslots[timeval] then store into new array
+    // if emails for time < dentists then append
+    // else return err
+}
+
+
+
 /*
-const updateBooking = function(event, context, callback) {
-    let params = {
-        data.Items.forEach(function(item) {
-            for (var attributename in item) {
-                if (item[attributename] === null) {
-                    UpdateNullFieldsToEmpty(item.PK, item.SK, attributename);
-            }
-        }
-    }
-} */
+1. query record and save into JSON object 
+2. for loop to count bookings with a certain time value (if time = event.time [add into array],
+    at the end of loop compare array to number of dentist) 
+3. if bookings < dentists
+4. append booking to JSON object xD
+5. if bookings = dentists
+6. fufufu
+
+*/
