@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Navbar from "../Navbar/Navbar";
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
-import {clinicApi} from '../services/clinic'
+import {clinicApi} from '../services/clinicApi'
 
 const MainContainer = styled.div`
 height: 100vh;
@@ -32,50 +32,56 @@ padding-top: 6rem;
   margin-bottom: -5rem;
 }
 `
-type clinicData =  {
-  clinicId: {N: number},
+interface Clinic {
+  clinicId: {N: string},
   name: {S: string},
   address: {S: string},
   city: {S: string},
   coordinate: {S: string},
   openinghours: {S: string},
   dentists: {S: string},
-  owner: {S: string},
+  owner: {S: string}
 };
 
-//let data : clinicData
+// const T : Clinic =  {
+//   clinicId: {N: "99"},
+//   name: {S: ""},
+//   address: {S: ""},
+//   city: {S: ""},
+//   coordinate: {S: ""},
+//   openinghours: {S: ""},
+//   dentists: {S: ""},
+//   owner: {S: ""}
+// }
 
+let clinicMetaData : Clinic;
 const BookAppointment = () => {
-  function getClinic()  {
-    //let clinicMetaData : string
-    let s = clinicApi.getClinic("1")
-    // let clinicMetaData = s+"";
-    // data = JSON.parse(clinicMetaData)
-    console.log("This is from API gateway");
-    return s;
-    
-    // console.log(data);
-    // return data;
+  async function getClinic()  {
+    //let s : Clinic = T
+    let data = await clinicApi.getClinic("1");
+    const clinicMetaData = data.data;
+    console.log(clinicMetaData);
+    return clinicMetaData;
   }
 
   // const clinicData = {
-  //   id: 1,
-  //   name: "Your Dentist",
-  //   owner: "Dan Tist",
-  //   dentists: 3,
-  //   address: "Spannmålsgatan 20",
-  //   city: "Gothenburg",
-  //   coordinate: {
+  //   id: clinicMetaData.clinicId, //"1"
+  //   name: clinicMetaData.name,// "Your Dentist",
+  //   owner: clinicMetaData.owner, //"Dan Tist",
+  //   dentists: clinicMetaData.dentists, //3,
+  //   address: clinicMetaData.address, //"Spannmålsgatan 20",
+  //   city: clinicMetaData.city, // "Gothenburg",
+  //   coordinate: clinicMetaData.coordinate, /*{
   //     "longitude": 11.969388,
   //     "latitude": 57.707619
-  //   },
-  //   openinghours: {
+  //   }*/
+  //   openinghours: clinicMetaData.openinghours/*{
   //     "monday": "9:00-17:00",
   //     "tuesday": "8:00-17:00",
   //     "wednesday": "7:00-16:00",
   //     "thursday": "9:00-17:00",
   //     "friday": "9:00-15:00"
-  //   }
+  //   }*/
   // }
 
   const date = {
@@ -155,8 +161,8 @@ const BookAppointment = () => {
                     <h2 className="card-title">test</h2>
                     <div className="card-text">
                     <button className="btn btn-primary btn-block" onClick={() => getClinic()}>Test get clinic</button>
-{/* 
-                        <h5>Opening hours</h5>
+
+                        {/* <h5>Opening hours</h5>
                         <p> Monday: {clinicData.openinghours.monday}</p>
                         <p> Tuesday: {clinicData.openinghours.tuesday}</p>
                         <p> Wednesday: {clinicData.openinghours.wednesday}</p>

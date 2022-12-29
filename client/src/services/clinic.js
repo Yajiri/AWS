@@ -5,10 +5,10 @@ export const clinicApi = {
     Api.get(`/clinics`)
   },
   getClinic: (clinicId) => {
-    let result
+    let result ;
     Api.get(`clinics/${clinicId}`).then(
       resp => {
-        console.log(resp.data);
+        //console.log(resp.data);
         result = resp.data;
 
       }
