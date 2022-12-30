@@ -13,9 +13,10 @@ exports.handler = function(event, context, callback) {
     documentClient.get(queryRecord, async function(err, data){
         // Stores number of dentist for given clinic
         
-        let dentists = await numOfDentist(event);
+        let selectedClinic = await getClinicData(event);
+        let dentists = selectedClinic.dentists;
         
-        console.log( "Num of dentists: " + dentists );
+        console.log( "Num of dentists: " + JSON.stringify(dentists));
         
         let record, newRecord;
 
@@ -95,7 +96,8 @@ const writeBooking = async function(record) {
   return writeMe;  
 }
 
-const numOfDentist = async function(event) {
+/***
+ * const numOfDentist = async function(event) {
 let num = -1;
     let params = {         
         TableName : "DentistimoClinicsTable",         
@@ -116,6 +118,39 @@ let num = -1;
             num = -3;
             let number = data.Item.dentists;
             myResolve(number);
+        }).catch((err) => {
+            console.log(err);
+            myReject(err);
+        });
+    // invoking promise obj my calling then to trigger lambda to get val from
+    // then calls res/rej funcs, which trigger handlers depending on res or rej
+    return num;
+}
+ * 
+ */
+
+
+const getClinicData  = async function(event) {
+    let num = -1;
+    let params = {         
+        TableName : "DentistimoClinicsTable",         
+        Key: {             
+            "id": parseInt(event.ClinicId)         
+        } 
+    }  
+    const myResolve = (myParam) => {
+        num = myParam;
+    }
+    const myReject = (myParam) => {
+        console.log(myParam);
+    }
+
+    await documentClient.get(params)
+        .promise()
+        .then((data) => {     
+            num = -3;
+            let clinic = data.Item;
+            myResolve(clinic);
         }).catch((err) => {
             console.log(err);
             myReject(err);
@@ -188,9 +223,7 @@ const updateBooking = function(record, time, email, dentists) {
                 "all bookings:" + JSON.stringify(allBookings) +
                 "all timeslots:" + JSON.stringify(timeSlots) 
             );
-        } else {
-           record.TimeSlots.push(['Time: ' + time, "Email: " + [email]]);
-        }
+        } 
     }
     // loop through entire record
     return record;
