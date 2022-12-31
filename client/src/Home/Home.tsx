@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, Component } from 'react'
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries'
 
@@ -77,6 +77,9 @@ const Content1 = styled.div`
     width: 50%;
     align: left;
   }
+  .MuiDialogActions-root, .MuiDialogActions-spacing, .css-hlj6pa-MuiDialogActions-root {
+    visibility: hidden
+  }
 `;
 const Content2 = styled.div`
   padding: 0.5rem;
@@ -85,17 +88,10 @@ const Content2 = styled.div`
 `;
 const Content3 = styled(Content2)``;
 
-const Button = styled.button`
-  /* Adapt the colors based on primary prop */
-  color: "palevioletred";
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid palevioletred;
-  border-radius: 3px;
-`;
-
 const Home = () => {
+  const [disable, setDisable] = useState(true);
+
+
   return(
     <MainContainer>
       <Navbar />
@@ -114,7 +110,6 @@ const Home = () => {
             <DatePicker />
             <Content3>
               <Overview />
-            <Button>Search Times</Button>
           </Content3>
           </Content1>
         </ContentBox>

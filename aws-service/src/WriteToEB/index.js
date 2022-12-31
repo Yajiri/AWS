@@ -10,10 +10,10 @@ exports.handler = async (event, context, callback) => {
         Entries: [ 
       {
         Detail: JSON.stringify({
-          "Name": event.key1,
-          "Message": event.key2
-         // "Date" : Date.now(),
-        //  "LastName": "person"
+          "clinicId": event.clinicId,
+          "date": event.Date,
+          "email": event.email,
+          "time": event.time
         }),
         DetailType: 'CreateAppointment',
         EventBusName: 'DentistimoEventBus',

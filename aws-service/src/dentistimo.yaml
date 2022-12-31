@@ -20,16 +20,16 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinic.Arn}/invocations
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinics.Arn}/invocations
               responses: {}
           /clinics/{clinicId}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinics.Arn}/invocations
+                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getClinic.Arn}/invocations
               responses: {}
-          /clinics/{clinicId}/appointments:
+          /schedule/{clinicIdDate}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -42,13 +42,12 @@ Resources:
                 type: aws_proxy
                 uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${bookAppointment.Arn}/invocations
               responses: {}
-          /clinics/{clinicId}/appointments/{appointmentId}:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getAppointment.Arn}/invocations
-              responses: {}
+            #get:
+            #  x-amazon-apigateway-integration:
+            #    httpMethod: POST
+            #    type: aws_proxy
+            #    uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getAppointment.Arn}/invocations
+            #  responses: {}
             delete:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -58,11 +57,10 @@ Resources:
       EndpointConfiguration: REGIONAL
       TracingEnabled: true
       Cors:
-        AllowMethods: "'POST'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-        MaxAge: "'600'"
-
+        AllowMethods: '''POST, GET, DELETE'''
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+        AllowOrigin: '''*'''
+        MaxAge: '''600'''
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -76,19 +74,19 @@ Resources:
       Timeout: 30
       Tracing: Active
       Events:
-        dentistimoGETclinics:
+        dentistimoGETclinicsid:
           Type: Api
           Properties:
-            Path: /clinics
+            Path: /clinics/{clinicId}
             Method: GET
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
+          TABLE_NAME: !Ref DentistimoClinicsTable
+          TABLE_ARN: !GetAtt DentistimoClinicsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref table
+            TableName: !Ref DentistimoClinicsTable
   getClinicLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -107,19 +105,19 @@ Resources:
       Timeout: 30
       Tracing: Active
       Events:
-        dentistimoGETclinicsid:
+        dentistimoGETclinics:
           Type: Api
           Properties:
-            Path: /clinics/{clinicId}
+            Path: /clinics/
             Method: GET
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
+          TABLE_NAME: !Ref DentistimoClinicsTable
+          TABLE_ARN: !GetAtt DentistimoClinicsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref table
+            TableName: !Ref DentistimoClinicsTable
   getClinicsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -141,52 +139,52 @@ Resources:
         dentistimoGETclinicsidappointments:
           Type: Api
           Properties:
-            Path: /clinics/{clinicId}/appointments
+            Path: /schedule/{clinicIdDate}
             Method: GET
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
+          TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
+          TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref table
+            TableName: !Ref DentistimoScheduleAppointmentsTable
   getAppointmentsLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /aws/lambda/${getAppointments}
-  getAppointment:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: !Sub
-        - Stack ${AWS::StackName} Function ${ResourceName}
-        - ResourceName: getAppointment
-      CodeUri: s3://dentistimo/ReadFromDDB.zip
-      Handler: index.handler
-      Runtime: nodejs12.x
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Events:
-        dentistimoGETclinicsidappointmentsid:
-          Type: Api
-          Properties:
-            Path: /clinics/{clinicId}/appointments/{appointmentId}
-            Method: GET
-            RestApiId: !Ref dentistimo
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref table
-  getAppointmentLogGroup:
-    Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${getAppointment}
+  #getAppointment:
+  #  Type: AWS::Serverless::Function
+  #  Properties:
+  #    Description: !Sub
+  #      - Stack ${AWS::StackName} Function ${ResourceName}
+  #      - ResourceName: getAppointment
+  #    CodeUri: s3://dentistimo/ReadFromDDB.zip
+  #    Handler: index.handler
+  #    Runtime: nodejs12.x
+  #    MemorySize: 3008
+  #    Timeout: 30
+  #    Tracing: Active
+  #    Events:
+  #      dentistimoGETclinicsidappointmentsid:
+  #        Type: Api
+  #        Properties:
+  #          Path: /clinics/{clinicId}/appointments/{appointmentId}
+  #          Method: GET
+  #          RestApiId: !Ref dentistimo
+  #    Environment:
+  #      Variables:
+  #        TABLE_NAME: !Ref table
+  #        TABLE_ARN: !GetAtt table.Arn
+  #    Policies:
+  #      - DynamoDBCrudPolicy:
+  #          TableName: !Ref table
+  #getAppointmentLogGroup:
+  #  Type: AWS::Logs::LogGroup
+  #  DeletionPolicy: Retain
+  #  Properties:
+  #    LogGroupName: !Sub /aws/lambda/${getAppointment}
   bookAppointment:
     Type: AWS::Serverless::Function
     Properties:
@@ -203,7 +201,7 @@ Resources:
         dentistimoPOSTclinicsidappointments:
           Type: Api
           Properties:
-            Path: /clinics/{clinicId}/appointments
+            Path: /schedule/{clinicIdDate}
             Method: POST
             RestApiId: !Ref dentistimo
       Environment:
@@ -233,8 +231,8 @@ Resources:
         dentistimoDELETEclinicsidappointmentsid:
           Type: Api
           Properties:
-            Path: /clinics/{clinicId}/appointments/{appointmentId}
-            Method: DELETE
+            Path: /schedule/{clinicIdDate}
+            Method: PATCH
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
@@ -261,11 +259,11 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
+          TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
+          TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref table
+            TableName: !Ref DentistimoScheduleAppointmentsTable
   cancelAppointmentDDBLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -285,11 +283,11 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          TABLE_NAME: !Ref table
-          TABLE_ARN: !GetAtt table.Arn
+          TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
+          TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref table
+            TableName: !Ref DentistimoScheduleAppointmentsTable
   bookAppointmentDDBLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
@@ -329,24 +327,42 @@ Resources:
       FunctionName: !GetAtt cancelAppointmentDDB.Arn
       Principal: !Sub events.${AWS::URLSuffix}
       SourceArn: !GetAtt eventCancel.Arn
-  table:
+  DentistimoClinicsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
       BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        -
+          AttributeName: clinicId
+          AttributeType: N
+
       KeySchema:
-        - AttributeName: id
+        -
+          AttributeName: clinicId
           KeyType: HASH
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
+  DentistimoScheduleAppointmentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        -
+          AttributeName: clinicIdDate
+          AttributeType: S
+
+      KeySchema:
+        -
+          AttributeName: clinicIdDate
+          KeyType: HASH
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES   
 Metadata:
   AWS::Composer::Groups:
     Group:
       Label: Group
       Members:
-        - getAppointment
+      #  - getAppointment
         - getAppointments
         - getClinics
         - getClinic
