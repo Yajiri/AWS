@@ -87,6 +87,8 @@ const BookAppointment = () => {
 
   const bookingFormInfo={
     dentists: 3,
+    clinicId: 1,
+    date: "20230106",
     clinicIDDate:"1_12-11-2022",
     timeSlots: [
       {time:"7:00",available:false},

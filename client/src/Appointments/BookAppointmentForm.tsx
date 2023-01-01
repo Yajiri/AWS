@@ -14,7 +14,9 @@ class BookAppointmentForm extends React.Component<any,any> {
         super(props);
         this.state = {
             timeSlots : props.data.timeSlots,
-            seletedTime: '',
+            clinicId: props.data.clinicId,
+            date: props.data.date,
+            time: '',
             email: '',
             clinicIDDate: props.data.clinicIDDate,
             dentists: props.data.dentists,
@@ -45,10 +47,20 @@ class BookAppointmentForm extends React.Component<any,any> {
     handleSubmit(event:any) {
         event.preventDefault();
         console.log(event);
-        console.log(this.checkInputNotNull())
+        console.log(this.checkInputNotNull());
         this.setState({loading:true});
-        this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'})
-        console.log (this.state.seletedTime + " " + this.state.email + " " + this.state.clinicIDDate +" ")
+        this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
+
+        let clinicId = this.state.clinicId;
+        let date = this.state.date;
+        let time = this.state.selectedTime
+        let email = this.state.email;
+
+        console.log ("clinicId: " + clinicId +
+            "\ndate: " + date +
+            "\ntime: " + time +
+            "\nemail: " + email + 
+            "\n: " + this.state.clinicIDDate);
         // await axios.post(
         //   '',
         //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
@@ -79,7 +91,7 @@ class BookAppointmentForm extends React.Component<any,any> {
      }
 
      checkInputNotNull(){
-        return(this.state.seletedTime!== "" && this.validateEmail())
+        return(this.state.selectedTime!== "" && this.validateEmail())
      }
 
       render(){
@@ -127,8 +139,8 @@ class BookAppointmentForm extends React.Component<any,any> {
                     {this.checkAvailabitily(this.state.timeSlots) && (
                         <>
                             <div className="form-group">
-                            <label htmlFor="seletedTime">Select a slot*</label>
-                            <Form.Select name="seletedTime" onChange={this.handleChange}>
+                            <label htmlFor="selectedTime">Select a slot*</label>
+                            <Form.Select name="selectedTime" onChange={this.handleChange}>
                                 {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
                                     if(slot.available){
                                         return <option value={slot.time}>{slot.time}</option>
