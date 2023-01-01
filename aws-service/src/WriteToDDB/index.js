@@ -1,37 +1,43 @@
 'use strict'  
 const AWS = require('aws-sdk'); 
 const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});
-exports.handler = function(event, context, callback) {     
+exports.handler = function(event, context, callback) { 
+    let detail = event.detail;
     let queryRecord = {         
-        TableName : "DentistimoBookings",         
+        TableName : "DentistimoAppointmentsTable",         
         Key: {             
-            "clinicId": event.detail.clinicId,             
-            "date": event.detail.date,                    
+            "clinicId": detail.clinicId,             
+            "date": detail.date,                    
         } 
     }
     
-    console.log(event.detail);
+    console.log(detail);
     
     documentClient.get(queryRecord, async function(err, data){        
-        let selectedClinic = await getClinicData(event);
-        console.log(selectedClinic);
+        
+        let selectedClinic = await getClinicData(detail);
+        
+        console.log("selected clinic:" + JSON.stringify(selectedClinic) + "date: " + JSON.stringify(detail.date));
+        console.log("clinic id: " + selectedClinic.clinicId);
+        
         let dentists = selectedClinic.dentists;
         let openingHours = selectedClinic.openinghours;        
         let record, newRecord, clinicHours;
 
         if( data !== null || typeof data != "undefined" ) { // If data exists
             record = await data.Item; // Assign data to record
-            let time = event.detail.time;
-            let bookings = event.detail.email;
+            console.log("record " + record);
+            let time = detail.time;
+            let bookings = detail.email;
 
           if(record == null) {
               console.log("new item created");
               
-              clinicHours = parseOpeningHours(openingHours, event.detail.date); // Parse timeslots to create bookable times
+              clinicHours = parseOpeningHours(openingHours, detail.date); // Parse timeslots to create bookable times
               console.log("parsed hours:" + JSON.stringify(clinicHours));
 
-              event.TtmeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
-              newRecord = createNewBooking(event, clinicHours); // Adds new record if clinic and date do not exist
+              detail.timeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
+              newRecord = createNewBooking(detail, clinicHours); // Adds new record if clinic and date do not exist
               
               let timeSlots = newRecord.timeSlots;
 
@@ -42,7 +48,7 @@ exports.handler = function(event, context, callback) {
           } else if (record) { // When a record for clinic and date already exists            
               let timeSlots = record.timeSlots;
       
-              console.log("if record exists " + JSON.stringify(event));
+              console.log("if record exists " + JSON.stringify(detail));
   
               newRecord = updateBooking(record, time, bookings, dentists); // Update the record as allowed with requested booking from payload
               
@@ -67,7 +73,7 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
     let params = {         
         TableName : "DentistimoClinicsTable",         
         Key: {             
-            "clinicId": parseInt(event.detail.clinicId)
+            "clinicId": event.clinicId
         } 
     }  
     const myResolve = (myParam) => {
@@ -92,9 +98,9 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
 
 const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
     let newRecord = {                 
-      "clinicId": event.detail.clinicId,             
-      "date": event.detail.date,
-      "timeSlots": clinicHours                
+      "clinicId": event.clinicId,
+      "date": event.date,
+      "timeSlots": clinicHours
     };  
 
     return newRecord;
@@ -102,7 +108,7 @@ const createNewBooking = function(event, clinicHours) { // Creates a new record 
 
 const writeBooking = async function(record) { // Helper function that writes a new booking
   let query = {         
-    TableName : "DentistimoBookings",         
+    TableName : "DentistimoAppointmentsTable",         
     Item: record               
 }  
 
@@ -133,6 +139,8 @@ const writeBooking = async function(record) { // Helper function that writes a n
 
 const parseOpeningHours = function(openingHours, date) {
     let openingHoursForDay;
+    
+    console.log("date for ella: " + typeof date);
 
     console.log("OP " + JSON.stringify(openingHours));
     
