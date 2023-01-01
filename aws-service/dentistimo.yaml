@@ -150,9 +150,14 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
           TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
+          TABLE_NAME: !Ref DentistimoClinicsTable
+          TABLE_ARN: !GetAtt DentistimoClinicsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref DentistimoScheduleAppointmentsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DentistimoClinicsTable
+
   getScheduleLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Retain
