@@ -124,9 +124,10 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
     return num;
 }
 
-/** 
- * Lines 130 - 214 authored by Ella
+/* 
+ *Lines 130 - 214 authored by Ella 
  */
+
 const parseOpeningHours = function(openingHours, date) {
     let openingHoursForDay;
 
