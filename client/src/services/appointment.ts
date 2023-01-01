@@ -8,7 +8,7 @@ export const appointmentApi = {
   getAppointments: (clinicId : number) => {
     Api.get(`/clinics/${clinicId}/appointments`);
   },
-  makeAppointment: <T>(data: AppointmentType) => {
-    Api.post<T>(`/appointments`, data);
+  makeAppointment: async <T>(data: AppointmentType) => {
+    return await Api.post<T>(`/appointments`, data);
   }
 }

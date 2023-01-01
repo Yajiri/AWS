@@ -55,18 +55,33 @@ class BookAppointmentForm extends React.Component<any,any> {
         this.setState({loading:true});
         this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
 
+        const data: AppointmentType = {
+            clinicId: this.state.clinicId,
+            date: this.state.date,
+            time: this.state.selectedTime,
+            email:  this.state.email,
+        }
         let clinicId = this.state.clinicId;
         let date = this.state.date;
         let time = this.state.selectedTime
         let email = this.state.email;
+
+        appointmentApi.makeAppointment(data)
+            .then((response: any) => {
+                console.log(response);
+            })
+            .catch((err: Error) => {
+                console.log(err);
+                
+            })
+
 
         console.log ("clinicId: " + clinicId +
             "\ndate: " + date +
             "\ntime: " + time +
             "\nemail: " + email + 
             "\n: " + this.state.clinicIDDate);
-
-
+            
         // await axios.post(
         //   '',
         //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
