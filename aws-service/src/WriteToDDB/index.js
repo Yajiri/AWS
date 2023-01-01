@@ -5,39 +5,40 @@ exports.handler = function(event, context, callback) {
     let queryRecord = {         
         TableName : "DentistimoBookings",         
         Key: {             
-            "ClinicId": event.ClinicId,             
-            "Date": event.Date,                    
+            "clinicId": event.detail.clinicId,             
+            "date": event.detail.date,                    
         } 
     }
     
     documentClient.get(queryRecord, async function(err, data){        
         let selectedClinic = await getClinicData(event);
+        console.log(selectedClinic);
         let dentists = selectedClinic.dentists;
         let openingHours = selectedClinic.openinghours;        
         let record, newRecord, clinicHours;
 
         if( data !== null || typeof data != "undefined" ) { // If data exists
             record = await data.Item; // Assign data to record
-            let time = event.Time;
-            let bookings = event.Email;
+            let time = event.detail.time;
+            let bookings = event.detail.email;
 
           if(record == null) {
               console.log("new item created");
               
-              clinicHours = parseOpeningHours(openingHours, event.Date); // Parse timeslots to create bookable times
+              clinicHours = parseOpeningHours(openingHours, event.detail.date); // Parse timeslots to create bookable times
               console.log("parsed hours:" + JSON.stringify(clinicHours));
 
-              event.TimeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
+              event.TtmeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
               newRecord = createNewBooking(event, clinicHours); // Adds new record if clinic and date do not exist
               
-              let timeSlots = newRecord.TimeSlots;
+              let timeSlots = newRecord.timeSlots;
 
               newRecord = updateBooking(newRecord, time, bookings, dentists); // Update the record as allowed with requested booking from payload
               
               console.log("new record with parsed and payload: " + JSON.stringify(newRecord));
 
           } else if (record) { // When a record for clinic and date already exists            
-              let timeSlots = record.TimeSlots;
+              let timeSlots = record.timeSlots;
       
               console.log("if record exists " + JSON.stringify(event));
   
@@ -59,11 +60,39 @@ exports.handler = function(event, context, callback) {
     }); 
 }
 
+const getClinicData  = async function(event) { // Helper function to retrieve clinic data 
+    let num = -1;
+    let params = {         
+        TableName : "DentistimoClinicsTable",         
+        Key: {             
+            "clinicId": parseInt(event.detail.clinicId)
+        } 
+    }  
+    const myResolve = (myParam) => {
+        num = myParam;
+    }
+    const myReject = (myParam) => {
+        console.log(myParam);
+    }
+
+    await documentClient.get(params)
+        .promise()
+        .then((data) => {     
+            num = -3;
+            let clinic = data.Item;
+            myResolve(clinic);
+        }).catch((err) => {
+            console.log(err);
+            myReject(err);
+        });
+    return num;
+}
+
 const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
     let newRecord = {                 
-      "ClinicId": event.ClinicId,             
-      "Date": event.Date,
-      "TimeSlots": clinicHours                
+      "clinicId": event.detail.clinicId,             
+      "date": event.detail.date,
+      "timeSlots": clinicHours                
     };  
 
     return newRecord;
@@ -96,36 +125,8 @@ const writeBooking = async function(record) { // Helper function that writes a n
   return writeMe;  
 }
 
-const getClinicData  = async function(event) { // Helper function to retrieve clinic data 
-    let num = -1;
-    let params = {         
-        TableName : "DentistimoClinicsTable",         
-        Key: {             
-            "clinicId": parseInt(event.ClinicId)
-        } 
-    }  
-    const myResolve = (myParam) => {
-        num = myParam;
-    }
-    const myReject = (myParam) => {
-        console.log(myParam);
-    }
-
-    await documentClient.get(params)
-        .promise()
-        .then((data) => {     
-            num = -3;
-            let clinic = data.Item;
-            myResolve(clinic);
-        }).catch((err) => {
-            console.log(err);
-            myReject(err);
-        });
-    return num;
-}
-
 /* 
- *Lines 130 - 214 authored by Ella 
+ *Lines 131 - 215 authored by Ella 
  */
 
 const parseOpeningHours = function(openingHours, date) {
@@ -217,9 +218,9 @@ const parseOpeningHours = function(openingHours, date) {
 const updateBooking = function(record, inputTime, email, dentists) {  
     console.log("updateBooking");
 
-    let timeSlots = record.TimeSlots;
+    let timeSlots = record.timeSlots;
 
-    console.log("clinicId: " + JSON.stringify(record.ClinicId) + 
+    console.log("clinicId: " + JSON.stringify(record.clinicId) + 
         ", payload time: " + JSON.stringify(typeof inputTime) + 
         ", payload email: " + JSON.stringify(email) );
    
@@ -246,11 +247,11 @@ const updateBooking = function(record, inputTime, email, dentists) {
                 found.bookings = allBookings;
                 console.log("after splice, record:" + JSON.stringify(found) );
 
-                let foundIndex = record.TimeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
-                record.TimeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record               
+                let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
+                record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record               
                 console.log(
                     "index in time slot: " + JSON.stringify(foundIndex) +
-                    "\nnew record timeslots " + JSON.stringify(record.TimeSlots) );
+                    "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
 
             } else { // When a time is fully booked, return error email
                 console.log("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
