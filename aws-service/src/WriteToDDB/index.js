@@ -283,6 +283,8 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
     }
     return record;
 };
+
+
 const acceptanceMail = async function (event) {
   var params = {
     Destination: {
