@@ -61,10 +61,6 @@ class BookAppointmentForm extends React.Component<any,any> {
             time: this.state.selectedTime,
             email:  this.state.email,
         }
-        let clinicId = this.state.clinicId;
-        let date = this.state.date;
-        let time = this.state.selectedTime
-        let email = this.state.email;
 
         appointmentApi.makeAppointment(data)
             .then((response: any) => {
@@ -74,18 +70,6 @@ class BookAppointmentForm extends React.Component<any,any> {
                 console.log(err);
                 
             })
-
-
-        console.log ("clinicId: " + clinicId +
-            "\ndate: " + date +
-            "\ntime: " + time +
-            "\nemail: " + email + 
-            "\n: " + this.state.clinicIDDate);
-            
-        // await axios.post(
-        //   '',
-        //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
-        // );
     }
 
     validateEmail(){
@@ -115,105 +99,104 @@ class BookAppointmentForm extends React.Component<any,any> {
         return(this.state.selectedTime!== "" && this.validateEmail())
      }
 
-      render(){
-        return(
-            
-            <div className="card card-container">
-                <form>
-                    <div className="form-group">
-                        <Container>
-                            <Col>
-                            
-                                <Row>
-                                    { this.checkAvailabitily(this.state.timeSlots) ? (
-                                        <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
-                                            if(slot.available)
-                                                return <Col>
-                                                            <Row>
-                                                                <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="success" disabled>{slot.time}</Button>
-                                                            </Row>
-                                                        </Col>
-                                                return <Col>
-                                                            <Row>
-                                                                <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="secondary" disabled>{slot.time}</Button>
-                                                            </Row>
-                                                        </Col>
-                                        }
+    render(){
+    return(
     
-                                        )}
-                                    </>
-
-                                    ) : (
-                                        <><div className="alert alert-secondary" role="alert">Unfortunately, there are no availabitilies for this date. Please select another day.</div>
-                                        </>
-                                    )
-                                        
-
-                                    }
-                                        
-                                    
-                                </Row>
-                            </Col>
-                        </Container>
-                    </div>
-                
-                    {this.checkAvailabitily(this.state.timeSlots) && (
-                        <>
-                            <div className="form-group">
-                            <label htmlFor="selectedTime">Select a slot*</label>
-                            <Form.Select name="selectedTime" onChange={this.handleChange}>
-                                {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
-                                    if(slot.available){
-                                        return <option value={slot.time}>{slot.time}</option>
-                                    }
-                                    }
-                                )}
-                            </Form.Select>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="email">Email*</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="email"
-                                    value={this.state.email}
-                                    onChange={this.handleChange}
-                                    required
-                                />
-                                
-                        </div>
-
-                      
-                        <div className="form-group">
-                        <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.state.inputIsValid}> 
-                        
-                            {this.state.loading && (
-                            <span className="spinner-border spinner-border-sm"></span>
-                            )}
-                            <span>Make Appointment</span>
-                        </button>
-                        </div>
-                    </>
-
-                    )}
+    <div className="card card-container">
+        <form>
+            <div className="form-group">
+                <Container>
+                    <Col>
                     
+                        <Row>
+                            { this.checkAvailabitily(this.state.timeSlots) ? (
+                                <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
+                                    if(slot.available)
+                                        return <Col>
+                                                    <Row>
+                                                        <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="success" disabled>{slot.time}</Button>
+                                                    </Row>
+                                                </Col>
+                                        return <Col>
+                                                    <Row>
+                                                        <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="secondary" disabled>{slot.time}</Button>
+                                                    </Row>
+                                                </Col>
+                                }
 
-                    <button className="btn btn-outline-info" >                 
-                        <span>Return to date&clinic selection</span>
-                    </button>
+                                )}
+                            </>
 
-                    {this.state.response && (
-                    <div className="form-group">
-                        <div className="alert alert-success" role="alert">
-                        {this.state.response}
-                        </div>
-                    </div>
-                    )}
-                </form>
+                            ) : (
+                                <><div className="alert alert-secondary" role="alert">Unfortunately, there are no availabitilies for this date. Please select another day.</div>
+                                </>
+                            )
+                                
+
+                            }
+                                
+                            
+                        </Row>
+                    </Col>
+                </Container>
             </div>
-        )
-      }
+        
+            {this.checkAvailabitily(this.state.timeSlots) && (
+                <>
+                    <div className="form-group">
+                    <label htmlFor="selectedTime">Select a slot*</label>
+                    <Form.Select name="selectedTime" onChange={this.handleChange}>
+                        {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
+                            if(slot.available){
+                                return <option value={slot.time}>{slot.time}</option>
+                            }
+                            }
+                        )}
+                    </Form.Select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="email">Email*</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                            required
+                        />
+                        
+                </div>
+
+                
+                <div className="form-group">
+                <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.state.inputIsValid}> 
+                
+                    {this.state.loading && (
+                    <span className="spinner-border spinner-border-sm"></span>
+                    )}
+                    <span>Make Appointment</span>
+                </button>
+                </div>
+            </>
+
+            )}
+            
+
+            <button className="btn btn-outline-info" >                 
+                <span>Return to date&clinic selection</span>
+            </button>
+
+            {this.state.response && (
+            <div className="form-group">
+                <div className="alert alert-success" role="alert">
+                {this.state.response}
+                </div>
+            </div>
+            )}
+        </form>
+    </div>
+    )}
 
 }
 
