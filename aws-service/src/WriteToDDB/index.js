@@ -10,6 +10,8 @@ exports.handler = function(event, context, callback) {
         } 
     }
     
+    console.log(event.detail);
+    
     documentClient.get(queryRecord, async function(err, data){        
         let selectedClinic = await getClinicData(event);
         console.log(selectedClinic);
