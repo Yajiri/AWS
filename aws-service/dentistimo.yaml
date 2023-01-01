@@ -91,7 +91,7 @@ Resources:
             TableName: !Ref DentistimoClinicsTable
   getClinicLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${getClinic}
   getClinics:
@@ -123,7 +123,7 @@ Resources:
             TableName: !Ref DentistimoClinicsTable
   getClinicsLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${getClinics}
   getSchedule:
@@ -148,19 +148,19 @@ Resources:
             RestApiId: !Ref dentistimo
       Environment:
         Variables:
-          TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
-          TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
+          TABLE_NAME: !Ref DentistimoAppointmentsTable
+          TABLE_ARN: !GetAtt DentistimoAppointmentsTable.Arn
           TABLE_NAME: !Ref DentistimoClinicsTable
           TABLE_ARN: !GetAtt DentistimoClinicsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoScheduleAppointmentsTable
+            TableName: !Ref DentistimoAppointmentsTable
         - DynamoDBCrudPolicy:
             TableName: !Ref DentistimoClinicsTable
 
   getScheduleLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${getSchedule}
   #getAppointment:
@@ -191,7 +191,7 @@ Resources:
   #          TableName: !Ref table
   #getAppointmentLogGroup:
   #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Retain
+  #  DeletionPolicy: Delete
   #  Properties:
   #    LogGroupName: !Sub /aws/lambda/${getAppointment}
   bookAppointmentEB:
@@ -222,7 +222,7 @@ Resources:
             EventBusName: dentistimoEventBus
   bookAppointmentEBLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${bookAppointmentEB}
   #cancelAppointment:
@@ -252,7 +252,7 @@ Resources:
   #          EventBusName: dentistimoEventBus
   #cancelAppointmentLogGroup:
   #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Retain
+  #  DeletionPolicy: Delete
   #  Properties:
   #    LogGroupName: !Sub /aws/lambda/${cancelAppointment}
   #cancelAppointmentDDB:
@@ -269,14 +269,14 @@ Resources:
   #    Tracing: Active
   #    Environment:
   #      Variables:
-  #        TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
-  #        TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
+  #        TABLE_NAME: !Ref DentistimoAppointmentsTable
+  #        TABLE_ARN: !GetAtt DentistimoAppointmentsTable.Arn
   #    Policies:
   #      - DynamoDBCrudPolicy:
-  #          TableName: !Ref DentistimoScheduleAppointmentsTable
+  #          TableName: !Ref DentistimoAppointmentsTable
   #cancelAppointmentDDBLogGroup:
   #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Retain
+  #  DeletionPolicy: Delete
   #  Properties:
   #    LogGroupName: !Sub /aws/lambda/${cancelAppointmentDDB}
   bookAppointmentDDB:
@@ -294,14 +294,14 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          TABLE_NAME: !Ref DentistimoScheduleAppointmentsTable
-          TABLE_ARN: !GetAtt DentistimoScheduleAppointmentsTable.Arn
+          TABLE_NAME: !Ref DentistimoAppointmentsTable
+          TABLE_ARN: !GetAtt DentistimoAppointmentsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref DentistimoScheduleAppointmentsTable
+            TableName: !Ref DentistimoAppointmentsTable
   bookAppointmentDDBLogGroup:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${bookAppointmentDDB}
   eventBook:
@@ -360,17 +360,17 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
       TableName: DentistimoClinicsTable
-  DentistimoScheduleAppointmentsTable:
+  DentistimoAppointmentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         -
           AttributeName: clinicId
-          AttributeType: S
+          AttributeType: N
         -
           AttributeName: date
-          AttributeType: S
+          AttributeType: N
 
       KeySchema:
         -
@@ -381,7 +381,7 @@ Resources:
           KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES  
-      TableName: DentistimoScheduleAppointmentsTable
+      TableName: DentistimoAppointmentsTable
 Metadata:
   AWS::Composer::Groups:
     Group:
