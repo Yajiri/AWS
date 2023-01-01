@@ -1,51 +1,68 @@
-'use strict'  
+'use strict';  
 const AWS = require('aws-sdk'); 
 const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});
-exports.handler = function(event, context, callback) {     
-    let queryRecord = {         
-        TableName : "DentistimoBookings",         
-        Key: {             
-            "ClinicId": event.ClinicId,             
-            "Date": event.Date,                    
-        } 
+var ses = new AWS.SES({ region: "eu-central-1" });
+var log = true;
+
+function clog (message){
+    if (log) {
+        console.log(message);
     }
+}
+
+exports.handler = function(event, context, callback) { 
+    let detail = event.detail;
+    let queryRecord = {         
+        TableName : "DentistimoAppointmentsTable",         
+        Key: {             
+            "clinicId": detail.clinicId,             
+            "date": detail.date,                    
+        } 
+    };
+    
+    clog(detail);
     
     documentClient.get(queryRecord, async function(err, data){        
-        let selectedClinic = await getClinicData(event);
+        
+        let selectedClinic = await getClinicData(detail);
+        
+        clog("selected clinic:" + JSON.stringify(selectedClinic) + "date: " + JSON.stringify(detail.date));
+        clog("clinic id: " + selectedClinic.clinicId);
+        
         let dentists = selectedClinic.dentists;
         let openingHours = selectedClinic.openinghours;        
         let record, newRecord, clinicHours;
 
         if( data !== null || typeof data != "undefined" ) { // If data exists
             record = await data.Item; // Assign data to record
-            let time = event.Time;
-            let bookings = event.Email;
+            clog("record " + record);
+            let time = detail.time;
+            let bookings = detail.email;
 
           if(record == null) {
-              console.log("new item created");
+              clog("new item created");
               
-              clinicHours = parseOpeningHours(openingHours, event.Date); // Parse timeslots to create bookable times
-              console.log("parsed hours:" + JSON.stringify(clinicHours));
+              clinicHours = parseOpeningHours(openingHours, detail.date); // Parse timeslots to create bookable times
+              clog("parsed hours:" + JSON.stringify(clinicHours));
 
-              event.TimeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
-              newRecord = createNewBooking(event, clinicHours); // Adds new record if clinic and date do not exist
+              detail.timeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
+              newRecord = createNewBooking(detail, clinicHours); // Adds new record if clinic and date do not exist
               
-              let timeSlots = newRecord.TimeSlots;
 
-              newRecord = updateBooking(newRecord, time, bookings, dentists); // Update the record as allowed with requested booking from payload
+              newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
               
-              console.log("new record with parsed and payload: " + JSON.stringify(newRecord));
+              clog("new record with parsed and payload: " + JSON.stringify(newRecord));
 
           } else if (record) { // When a record for clinic and date already exists            
-              let timeSlots = record.TimeSlots;
+              let timeSlots = record.timeSlots;
       
-              console.log("if record exists " + JSON.stringify(event));
+              clog("if record exists " + JSON.stringify(detail));
   
-              newRecord = updateBooking(record, time, bookings, dentists); // Update the record as allowed with requested booking from payload
+              newRecord = updateBooking(record, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
               
-              console.log("update booking gave us: " + JSON.stringify(timeSlots));
+              clog("update booking gave us: " + JSON.stringify(timeSlots));
   
-              console.log("this is new record " + JSON.stringify(record));                
+              clog("this is new record " + JSON.stringify(record));                
           }
 
           await writeBooking(newRecord); // Write the record to the database
@@ -54,62 +71,26 @@ exports.handler = function(event, context, callback) {
         } else {
             // why is data null or undefined? this is a system error, throw
             // the circuit breaker
+            denialMail(detail);
             callback(err, null);
         }
     }); 
-}
-
-const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
-    let newRecord = {                 
-      "ClinicId": event.ClinicId,             
-      "Date": event.Date,
-      "TimeSlots": clinicHours                
-    };  
-
-    return newRecord;
-}
-
-const writeBooking = async function(record) { // Helper function that writes a new booking
-  let query = {         
-    TableName : "DentistimoBookings",         
-    Item: record               
-}  
-
-  let num = -1;
-  const myResolve = (myParam) => {
-    num = myParam;
-  }
-
-  const myReject = (myParam) => {
-      console.log(myParam);
-  }
-
-  let writeMe = await documentClient.put(query)
-  .promise()
-      .then((data) => {     
-          console.log(num);
-          myResolve(data);
-      }).catch((err) => {
-          console.log(err);
-          myReject(err);
-      });
-  return writeMe;  
-}
+};
 
 const getClinicData  = async function(event) { // Helper function to retrieve clinic data 
     let num = -1;
     let params = {         
         TableName : "DentistimoClinicsTable",         
         Key: {             
-            "clinicId": parseInt(event.ClinicId)
+            "clinicId": event.clinicId
         } 
-    }  
+    };  
     const myResolve = (myParam) => {
         num = myParam;
-    }
+    };
     const myReject = (myParam) => {
-        console.log(myParam);
-    }
+        clog(myParam);
+    };
 
     await documentClient.get(params)
         .promise()
@@ -118,30 +99,69 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
             let clinic = data.Item;
             myResolve(clinic);
         }).catch((err) => {
-            console.log(err);
+            clog(err);
             myReject(err);
         });
     return num;
-}
+};
+
+const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
+    let newRecord = {                 
+      "clinicId": event.clinicId,
+      "date": event.date,
+      "timeSlots": clinicHours
+    };  
+
+    return newRecord;
+};
+
+const writeBooking = async function(record) { // Helper function that writes a new booking
+  let query = {         
+    TableName : "DentistimoAppointmentsTable",         
+    Item: record               
+};  
+
+  let num = -1;
+  const myResolve = (myParam) => {
+    num = myParam;
+  };
+
+  const myReject = (myParam) => {
+      clog(myParam);
+  };
+
+  let writeMe = await documentClient.put(query)
+  .promise()
+      .then((data) => {     
+          clog(num);
+          myResolve(data);
+      }).catch((err) => {
+          clog(err);
+          myReject(err);
+      });
+  return writeMe;  
+};
 
 /* 
- *Lines 130 - 214 authored by Ella 
+ *Lines 131 - 215 authored by Ella 
  */
 
 const parseOpeningHours = function(openingHours, date) {
     let openingHoursForDay;
+    
+    clog("date for ella: " + typeof date);
 
-    console.log("OP " + JSON.stringify(openingHours));
+    clog("OP " + JSON.stringify(openingHours));
     
-    const y = date.slice(0,4)
-    const m = date.slice(4,6)
-    const d = date.slice(6,8)
+    const y = date.slice(0,4);
+    const m = date.slice(4,6);
+    const d = date.slice(6,8);
     
-    const ymd = y + "-" + m + "-" + d
+    const ymd = y + "-" + m + "-" + d;
     
-    const parsedDate = new Date(ymd)
-    const weekday = parsedDate.getDay()
-    console.log("weekDay" + weekday)
+    const parsedDate = new Date(ymd);
+    const weekday = parsedDate.getDay();
+    clog("weekDay" + weekday);
     
     switch (weekday) {
         case 0:
@@ -179,21 +199,21 @@ const parseOpeningHours = function(openingHours, date) {
         openingHoursForDay = openingHoursForDay;
     }
         
-    console.log("check", openingHoursForDay)
-    let hours = openingHoursForDay.split(":")
-    let startH = parseFloat(hours[0])
-    console.log(startH)
-    hours = openingHoursForDay.split("-")
-    const endH = parseFloat(hours[1].split(":")[0])
+    clog("check", openingHoursForDay);
+    let hours = openingHoursForDay.split(":");
+    let startH = parseFloat(hours[0]);
+    clog(startH);
+    hours = openingHoursForDay.split("-");
+    const endH = parseFloat(hours[1].split(":")[0]);
    
-    let i = 0
-    let newTimeSlots=[]
-    let t = ""
+    let i = 0;
+    let newTimeSlots=[];
+    let t = "";
     
     // While clinic for hours are within range of start to (end - 0.5)
     while(startH <= endH - 0.5) {
         // Assign starting hour to t and cast as Int
-        t = parseInt(startH);
+        t = parseInt(startH, 10);
         if(startH % 1 === 0.5) {
             // If number has a remainder of 0.5 number is a whole hour
             t += ":30";    
@@ -212,14 +232,14 @@ const parseOpeningHours = function(openingHours, date) {
         startH += 0.5;
     }
     return newTimeSlots;
-}
+};
 
-const updateBooking = function(record, inputTime, email, dentists) {  
-    console.log("updateBooking");
+const updateBooking = function(record, inputTime, email, dentists, event) {  
+    clog("updateBooking");
 
-    let timeSlots = record.TimeSlots;
+    let timeSlots = record.timeSlots;
 
-    console.log("clinicId: " + JSON.stringify(record.ClinicId) + 
+    clog("clinicId: " + JSON.stringify(record.clinicId) + 
         ", payload time: " + JSON.stringify(typeof inputTime) + 
         ", payload email: " + JSON.stringify(email) );
    
@@ -227,36 +247,74 @@ const updateBooking = function(record, inputTime, email, dentists) {
         // check if record for a given time exists
         let found = timeSlots.find(element => (element.time == inputTime)); // check if record for a given time exists
         
-        console.log("found bookings for this time: " + JSON.stringify(found) );
+        clog("found bookings for this time: " + JSON.stringify(found) );
         
         if ( (! found || typeof found === "undefined" ) ) { // this timeslot is not available
             // send a mail saying the requested date is not available for booking (failed)
-            console.log("didn't find the record");
+            denialMail(event);
+            clog("didn't find the record");
 
         } else {  // the timeslot is available, see if it is available        
-            let allBookings = found.bookings // bookings arrays for this time
-            let bookings = found.bookings.length // number of emails stored within selected time
+            let allBookings = found.bookings; // bookings arrays for this time
+            let bookings = found.bookings.length; // number of emails stored within selected time
             
-            console.log(" dentists: " + JSON.stringify(dentists) + 
+            clog(" dentists: " + JSON.stringify(dentists) + 
                 " existing email(s) for this time: " + JSON.stringify(allBookings)+
                 " input: " + JSON.stringify(inputTime));
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
-                let newBookings = allBookings.splice(allBookings, 0, email); // add email to email array
+                allBookings.splice(allBookings, 0, email); // add email to email array
                 found.bookings = allBookings;
-                console.log("after splice, record:" + JSON.stringify(found) );
+                clog("after splice, record:" + JSON.stringify(found) );
 
-                let foundIndex = record.TimeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
-                record.TimeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record               
-                console.log(
+                let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
+                record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record  
+                acceptanceMail(event);
+                clog(
                     "index in time slot: " + JSON.stringify(foundIndex) +
-                    "\nnew record timeslots " + JSON.stringify(record.TimeSlots) );
+                    "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
 
             } else { // When a time is fully booked, return error email
-                console.log("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
+                denialMail(event);
+                clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
             }
-            console.log("all bookings:" + JSON.stringify(allBookings));
+            clog("all bookings:" + JSON.stringify(allBookings));
         } 
     }
     return record;
-}
+};
+
+
+const acceptanceMail = async function (event) {
+  var params = {
+    Destination: {
+      ToAddresses: [event.email],
+    },
+    Message: {
+      Body: {
+        Text: { Data: "Your booking was successful for " + event.date + 
+            " at " + event.time + "!" },
+      },
+      Subject: { Data: "Successful booking" },
+    },
+    Source: "jensp6@hotmail.com",
+  };
+  return ses.sendEmail(params).promise();
+};
+
+const denialMail = async function (event) {
+  var params = {
+    Destination: {
+      ToAddresses: [event.email],
+    },
+    Message: {
+      Body: {
+        Text: { Data: "Your booking was unsuccessful for " + event.date + 
+            " at " + event.time + ". Please try again."},
+      },
+      Subject: { Data: "Unsuccessful booking" },
+    },
+    Source: "jensp6@hotmail.com",
+  };
+  return ses.sendEmail(params).promise();
+};

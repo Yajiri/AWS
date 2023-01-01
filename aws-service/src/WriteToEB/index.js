@@ -10,8 +10,8 @@ exports.handler = async (event, context, callback) => {
         Entries: [ 
       {
         Detail: JSON.stringify({
-          "clinicId": event.ClinicId,
-          "date": event.Date,
+          "clinicId": event.clinicId,
+          "date": event.date,
           "time": event.time,
           "email": event.email,
         }),
