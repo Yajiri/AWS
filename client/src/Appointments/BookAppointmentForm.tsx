@@ -1,4 +1,8 @@
 import React from "react";
+import { appointmentApi } from "../services/appointment";
+
+import AppointmentType from "../Types/AppointmentType";
+
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -61,6 +65,8 @@ class BookAppointmentForm extends React.Component<any,any> {
             "\ntime: " + time +
             "\nemail: " + email + 
             "\n: " + this.state.clinicIDDate);
+
+
         // await axios.post(
         //   '',
         //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
