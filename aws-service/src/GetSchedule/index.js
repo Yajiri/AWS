@@ -7,19 +7,33 @@ exports.handler = async(event, context, callback) => {
     const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
     let result = {}, timeSlots;
     let timeSlotsAvailability = {};
-    
-    
-    const responseClinic = await getClinic( event.ClinicId);
+
+//
+    //  return {
+    //     statusCode : 200,
+    //     body: JSON.stringify({
+    //         "id":event.pathParameters.clinicId,
+    //         "date":event.pathParameters.date
+    //     }),
+    //     isBase64Encoded : false,
+    //     headers:{"content-type" : "application/json"}
+          
+    // };
+
+//
+
+    // to be changed upon template update (it should be clinicId instead)
+    const responseClinic = await getClinic( event.pathParameters.clinicId);
     
     if(JSON.stringify(responseClinic)!=="{}") {
 
-        const responseBooking = await getSchedule(event.ClinicId, event.Date);
+        const responseBooking = await getSchedule(event.pathParameters.clinicId, event.pathParameters.date);
         
         console.log("responseB " + responseBooking.Item + " " + JSON.stringify(responseBooking))
         
-        if(responseBooking === null) {
-            //todo
-        }
+        // if(responseBooking === null) {
+        //     //todo
+        // }
             
         if(JSON.stringify(responseBooking)=="{}" ) {
            
@@ -29,29 +43,22 @@ exports.handler = async(event, context, callback) => {
             
             // parse opening hours for the day from clinic record to create a new
             // availability array
-            timeSlots = parseOpeningHours(openingHours, event.Date);
+            timeSlots = parseOpeningHours(openingHours, event.pathParameters.date);
             
             result = {
-                clinicId: event.ClinicId,
-                date: event.Date,
+                clinicId: event.pathParameters.clinicId,
+                date: event.pathParameters.date,
                 timeSlots: timeSlots
             };
             
             console.log("New entry");
     
-            // return {
-            //     statusCode : 200,
-            //     headers: {
-            //         "Content-Type" : "application/json",
-            //             "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-            //             "Access-Control-Allow-Methods" : "OPTIONS,GET",
-            //             "Access-Control-Allow-Credentials" : true,
-            //             "Access-Control-Allow-Origin" : "",
-            //             "X-Requested-With" : "*"
-            //     },
-            //     body: newEntry
-            
-            // };
+            return {
+                statusCode : 200,
+                body: JSON.stringify(result),
+                isBase64Encoded : false,
+                headers:{"content-type" : "application/json"}
+            };
                 
         } else if(JSON.stringify(responseBooking)===null) {
             // this is an error case...throw the circuit breaker here
@@ -66,47 +73,56 @@ exports.handler = async(event, context, callback) => {
             };
             
             console.log ("Error entry");
+
+            return {
+                statusCode : 404,
+                body: JSON.stringify(result),
+                isBase64Encoded : false,
+                headers:{"content-type" : "application/json"}
+            };
+            
     
         } else {
             
-            const slots = responseBooking.Item.TimeSlots.L
+            const slots = responseBooking.Item.timeSlots.L
             const dentists = responseClinic.Item.dentists.N;
             
             // parse the existing schedule
             let parsedTimeSlots = parseTimeSlots( dentists, slots );
     
             result = {
-                clinicId: event.clinicId ,
-                date: event.date,
+                clinicId: event.pathParameters.clinicId,
+                date: event.pathParameters.date,
                 timeSlots: parsedTimeSlots
             };
             
             console.log("Existing entry");
             
+            return {
+                statusCode : 200,
+                body: JSON.stringify(result),
+                isBase64Encoded : false,
+                headers:{"content-type" : "application/json"}
+            };
         }
         
-        console.log(result);
     } else {
         result = ["Invalid Clinic "]
-    }
+    // }
     
     return {
-        statusCode : 200,
-        headers: {
-            "Content-Type" : "application/json",
-                "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-                "Access-Control-Allow-Methods" : "OPTIONS,GET",
-                "Access-Control-Allow-Credentials" : true,
-                "Access-Control-Allow-Origin" : "",
-                "X-Requested-With" : "*"
-        },
-        body: result
+        statusCode : 404,
+        body: JSON.stringify(result),
+        isBase64Encoded : false,
+        headers:{"content-type" : "application/json"}
     };
+    
+    }
 
     async function getClinic(clinicId) {
         const paramsClinic = { TableName: "DentistimoClinicsTable",
             Key: {
-                id:{
+                "clinicId":{
                     N:clinicId 
                 },
             }
@@ -120,12 +136,12 @@ exports.handler = async(event, context, callback) => {
     async function getSchedule(clinicId, date) {
         console.log(clinicId + " " + date)
         const paramsBooking = {
-            TableName : "DentistimoBookings",         
+            TableName : "DentistimoAppointmentsTable",         
             Key: {             
-                "ClinicId": {
-                    S: clinicId 
+                "clinicId": {
+                    N: clinicId 
                     },             
-                "Date":{ 
+                "date":{ 
                     S: date 
                 },
             } 
@@ -236,4 +252,3 @@ exports.handler = async(event, context, callback) => {
     }
     
 }
-
