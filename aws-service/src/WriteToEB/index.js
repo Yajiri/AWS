@@ -10,10 +10,10 @@ exports.handler = async (event, context, callback) => {
         Entries: [ 
       {
         Detail: JSON.stringify({
-          "Name": event.key1,
-          "Message": event.key2
-         // "Date" : Date.now(),
-        //  "LastName": "person"
+          "clinicId": event.clinicId,
+          "date": event.date,
+          "time": event.time,
+          "email": event.email,
         }),
         DetailType: 'CreateAppointment',
         EventBusName: 'DentistimoEventBus',
@@ -34,5 +34,4 @@ exports.handler = async (event, context, callback) => {
   // Publish to EventBridge
   const result = await eventBridge.putEvents(params).promise()
   console.log(result)
-    
 };
