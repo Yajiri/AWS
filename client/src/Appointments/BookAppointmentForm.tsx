@@ -39,7 +39,7 @@ class BookAppointmentForm extends React.Component<any,any> {
 
     componentDidMount(): void {
         async function getTimeSlots() {
-            const data = await appointmentApi.getAppointments("1","20230101"); //to be replaced with data from props
+            const data = await appointmentApi.getAppointments("1","20230104"); //to be replaced with data from props
             return data;
         }
 
@@ -68,7 +68,7 @@ class BookAppointmentForm extends React.Component<any,any> {
         console.log(event);
         console.log(this.checkInputNotNull());
         this.setState({loading:true});
-        this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
+        //this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
 
         const data: AppointmentType = {
             clinicId: this.state.clinicId,
@@ -79,9 +79,11 @@ class BookAppointmentForm extends React.Component<any,any> {
 
         appointmentApi.makeAppointment(data)
             .then((response: any) => {
+                this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
                 console.log(response);
             })
             .catch((err: Error) => {
+                this.setState({response:'We could not process your request! Please try again later!'});
                 console.log(err);
                 
             })
