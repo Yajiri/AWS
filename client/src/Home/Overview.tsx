@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
+import { useNavigate } from "react-router-dom";
 import ClinicType from '../Types/ClinicType';
 
 import styled from 'styled-components';
@@ -34,43 +35,40 @@ const Home = () => {
   const [opened, setIsOpened] = useState<boolean>(false);
   // const [data, setData] = useState([]);
   const [clinic, setClinic] = useState<ClinicType>();
-  const [selectedDate, setDate] = useState();
+  const [date, setDate] = useState();
 
   const handleOnOpen = () => setIsOpened(true);
   const handleOnClose = () => setIsOpened(false);
 
-  console.log(clinic);
-
   useEffect(() => {
-    const clinic = JSON.parse(localStorage.getItem('clinic') || '{}');
-    if (clinic) {
-      setClinic(clinic);
+    const selectedClinic = JSON.parse(localStorage.getItem('clinic') || '{}');
+    if (selectedClinic) {
+      setClinic(selectedClinic);
     }
   }, [clinic]);
-
-  console.log(clinic);
 
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
       setDate(selectedDate);
     }
-  }, [ref]);
+  }, [date]);
 
+  
   let handleClick = false;
-
-  if (opened) {
-    console.log("I am clickable");
+  if ( date && clinic) {
+    console.log(date);
     handleClick = false;
   } else {
    console.log("I am not clickable");
     handleClick = true;
   }
 
-  /* If there is no selected clinic or no selected date, the button should be disabled
-  ** if (!data || !selectedDate)
-  **/
-
+  let navigate = useNavigate(); 
+  const routeChange = () =>{ 
+    let path = `/appointments/${clinic?.clinicId}`; 
+    navigate(path);
+  }
 
   return(<div ref={containerRef}>
     {clinic?.clinicId ?
@@ -87,7 +85,12 @@ const Home = () => {
         <h5>{`\nThursday: ${clinic?.openinghours?.thursday}`}</h5>
         <h5>{`\nFriday: ${clinic?.openinghours?.friday}`}</h5>
         
-       <Button disabled={handleClick}>Search Times</Button>
+       <Button 
+        disabled={handleClick} 
+        onClick={routeChange}
+       >
+         Search Times
+        </Button>
       </Content1>
      : 
      <div></div>
