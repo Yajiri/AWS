@@ -7,7 +7,7 @@ import Navbar from "../Navbar/Navbar";
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
 import {clinicApi} from '../services/clinicApi';
-//
+import { appointmentApi } from "../services/appointmentApi";
 import IClinic  from '../types/IClinic'
 import ITimeSlots from "../types/ITimeSlots";
 
@@ -35,25 +35,6 @@ padding-top: 6rem;
   margin-bottom: -5rem;
 }
 `
-interface Clinic {
-  clinicId: {N: string},
-  name: {S: string},
-  address: {S: string},
-  city: {S: string},
-  coordinate: {M: {
-    latitude: {N: string},
-    longitude: {N: string}
-  }},
-  openinghours: {M: {
-    monday: {S: string},
-    tuesday: {S: string},
-    wednesday: {S: string},
-    thursday: {S: string},
-    friday: {S: string}
-  }},
-  dentists: {N: string},
-  owner: {S: string}
-};
 
 const BookAppointment = () => {
 
@@ -90,10 +71,12 @@ const BookAppointment = () => {
     return data
     
   }
+
+
   useEffect(() => {
     getData().then( resp =>{
       setClinicData(resp.data)
-      console.log(clinicData.clinicId)
+      console.log(clinicData)
     }
     ) 
 
@@ -105,57 +88,8 @@ const BookAppointment = () => {
     d:"Wed"
 
   }
-  const schedule = {
-    clinicIDDate:"1_12-11-2022",
-    timeSlots: [
-      {time:"7:00",available:false},
-      {time:"7:00", available:false},
-      {time:"7:30", available:false},
-      {time:"8:00", available:false},
-      {time:"8:30", available:false},
-      {time:"9:00", available:false},
-      {time:"9:30", available:false},
-      {time:"10:00", available:false},
-      {time:"10:30", available:false},
-      {time:"11:00", available:false},
-      {time:"11:30", available:false},
-      //lunch
-      // {time:"12:00", available:false},
-      // {time:"12:30", available:false},
-      {time:"14:00", available:false},
-      {time:"14:30", available:false},
-      //fika
-      // {time:"15:00", available:false},
-      {time:"15:30", available:false},
-    ]
-  }
 
-  const bookingFormInfo={
-    dentists: 3,
-    clinicIDDate:"1_12-11-2022",
-    timeSlots: [
-      {time:"7:00",available:false},
-      {time:"7:00", available:false},
-      {time:"7:30", available:false},
-      {time:"8:00", available:false},
-      {time:"8:30", available:false},
-      {time:"9:00", available:false},
-      {time:"9:30", available:false},
-      {time:"10:00", available:false},
-      {time:"10:30", available:false},
-      {time:"11:00", available:false},
-      {time:"11:30", available:true},
-      //lunch
-      // {time:"12:00", available:false},
-      // {time:"12:30", available:false},
-      {time:"14:00", available:false},
-      {time:"14:30", available:true},
-      //fika
-      // {time:"15:00", available:false},
-      {time:"15:30", available:false},
-    ]
- 
-  }
+
 
   return (
     <MainContainer>
@@ -166,7 +100,7 @@ const BookAppointment = () => {
                 <Col>
                 <div className="card card-container">
                     <h3>Available time slots for {date.d} {date.D}.{date.m}.{date.y} </h3>
-                        <BookAppointmentForm data={bookingFormInfo}/>
+                        <BookAppointmentForm data={timeSlots}/>
                     </div>
                 </Col>
 

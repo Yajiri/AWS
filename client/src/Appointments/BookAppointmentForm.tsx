@@ -5,7 +5,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import * as EmailValidator from 'email-validator';
-import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/css/bootstrap.min.css";
+import { appointmentApi } from "../services/appointmentApi";
+import { clinicApi } from "../services/clinicApi";
+
 
 // const validator = require('validator');
 
@@ -13,11 +16,11 @@ class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
         super(props);
         this.state = {
-            timeSlots : props.data.timeSlots,
+            timeSlots :props.data.timeSlots,
             seletedTime: '',
             email: '',
-            clinicIDDate: props.data.clinicIDDate,
-            dentists: props.data.dentists,
+            clinicId: '',
+            date: '',
             loading: false,
             inputIsValid: false,
             response : '',
@@ -26,6 +29,20 @@ class BookAppointmentForm extends React.Component<any,any> {
         this.handleChange = this.handleChange.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
         this.checkInputNotNull = this.checkInputNotNull.bind(this);
+    }
+
+    componentDidMount(): void {
+        async function getTimeSlots() {
+            const data = await appointmentApi.getAppointments("2","20230104")
+            return data
+        }
+
+        getTimeSlots().then(resp => {
+            
+            console.log(resp.data.timeSlots);
+            this.setState({timeSlots: resp.data.timeSlots});  
+          })
+      
     }
 
     handleChange(event:any) {
