@@ -1,4 +1,6 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
+import ClinicType from '../Types/ClinicType';
+
 import styled from 'styled-components';
 
 const Content1 = styled.div`
@@ -27,17 +29,23 @@ city: string
 
 const Home = () => {
   const ref = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [opened, setIsOpened] = useState<boolean>(false);
-  const [data, setClinic] = useState([]);
+  const [data, setData] = useState<ClinicType>();
+  const [clinic, setClinic] = useState([]);
   const [selectedDate, setDate] = useState();
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('clinic') || '{}');
     if (data) {
-      setClinic(data);
+      setData(data);
       console.log(data);
     }
   }, [ref]);
+
+  console.log(data);
+
 
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
@@ -46,9 +54,11 @@ const Home = () => {
     }
   }, [ref]);
 
+  console.log("typeof date:" + typeof selectedDate);
+
   let handleClick = false;
 
-  if (data[1] > 0) {
+  if (data) {
     //console.log("I am clickable");
     handleClick = false;
   } else {
@@ -61,15 +71,25 @@ const Home = () => {
   **/
 
 
-  return(
-    <Content1>
+  return(<div ref={containerRef}>
+    {data?
+      <Content1>
         <h3>Clinic Information</h3>
-        <h4>Clinic: {data[0]}</h4>
-        <h4>Address: {data[2]}, {data[3]}</h4>
-        <h4>Dentists: {data[1]}</h4>        
-        <h4>Opening hours:</h4>
-        <Button disabled={handleClick}>Search Times</Button>
-    </Content1>
+        <h4>{`Clinic: ${data.name}`}</h4>
+        <h4>{`Address: ${data.address}, ${data.city}`}</h4>
+
+        <h4>{`Opening hours:`}</h4>
+        <h5>{`\nMonday: ${data.openinghours?.monday}`}</h5>
+        <h5>{`\nTuesday: ${data.openinghours?.tuesday}`}</h5>
+        <h5>{`\nWednesday: ${data.openinghours?.wednesday}`}</h5>
+        <h5>{`\nThursday: ${data.openinghours?.thursday}`}</h5>
+        <h5>{`\nFriday: ${data.openinghours?.friday}`}</h5>
+       <Button disabled={handleClick}>Search Times</Button>
+      </Content1>
+     : 
+     <div></div>
+    }
+    </div>
   );
 }
 

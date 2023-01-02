@@ -1,7 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import { useEffect, useRef, useState } from "react";
 import { clinicApi } from "../services/clinic";
-//import Clinics from "./clinics";
 import MapPoint from "./MapPoint";
 import OverlayContainer from "./OverlayContainer";
 
@@ -26,7 +25,7 @@ const useStyles = makeStyles({
 function Map({ center, zoom }: MapProps) {
   const ref = useRef(null);
   const [map, setMap] = useState<google.maps.Map<Element> | null>(null)
-  const [Clinics, setClinic] = useState([]);
+  const [clinics, setClinic] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
@@ -54,7 +53,7 @@ function Map({ center, zoom }: MapProps) {
   }, [ref])
 
     return <div ref={ref} id="map" className={classes.map}>
-    {Clinics.map((clinic : ClinicType) => (
+    {clinics.map((clinic : ClinicType) => (
       <OverlayContainer
         map={map}
         position={{
