@@ -32,20 +32,23 @@ const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [opened, setIsOpened] = useState<boolean>(false);
-  const [data, setData] = useState<ClinicType>();
-  const [clinic, setClinic] = useState([]);
+  // const [data, setData] = useState([]);
+  const [clinic, setClinic] = useState<ClinicType>();
   const [selectedDate, setDate] = useState();
 
+  const handleOnOpen = () => setIsOpened(true);
+  const handleOnClose = () => setIsOpened(false);
+
+  console.log(clinic);
+
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('clinic') || '{}');
-    if (data) {
-      setData(data);
-      console.log(data);
+    const clinic = JSON.parse(localStorage.getItem('clinic') || '{}');
+    if (clinic) {
+      setClinic(clinic);
     }
-  }, [ref]);
+  }, [clinic]);
 
-  console.log(data);
-
+  console.log(clinic);
 
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
@@ -54,15 +57,13 @@ const Home = () => {
     }
   }, [ref]);
 
-  console.log("typeof date:" + typeof selectedDate);
-
   let handleClick = false;
 
-  if (data) {
-    //console.log("I am clickable");
+  if (opened) {
+    console.log("I am clickable");
     handleClick = false;
   } else {
-   //console.log("I am not clickable");
+   console.log("I am not clickable");
     handleClick = true;
   }
 
@@ -72,18 +73,20 @@ const Home = () => {
 
 
   return(<div ref={containerRef}>
-    {data?
+    {clinic?.clinicId ?
       <Content1>
         <h3>Clinic Information</h3>
-        <h4>{`Clinic: ${data.name}`}</h4>
-        <h4>{`Address: ${data.address}, ${data.city}`}</h4>
+
+        <h4>{`Clinic: ${clinic?.name}`}</h4>
+        <h4>{`Address: ${clinic?.address}, ${clinic?.city}`}</h4>
 
         <h4>{`Opening hours:`}</h4>
-        <h5>{`\nMonday: ${data.openinghours?.monday}`}</h5>
-        <h5>{`\nTuesday: ${data.openinghours?.tuesday}`}</h5>
-        <h5>{`\nWednesday: ${data.openinghours?.wednesday}`}</h5>
-        <h5>{`\nThursday: ${data.openinghours?.thursday}`}</h5>
-        <h5>{`\nFriday: ${data.openinghours?.friday}`}</h5>
+        <h5>{`\nMonday: ${clinic?.openinghours?.monday}`}</h5>
+        <h5>{`\nTuesday: ${clinic?.openinghours?.tuesday}`}</h5>
+        <h5>{`\nWednesday: ${clinic?.openinghours?.wednesday}`}</h5>
+        <h5>{`\nThursday: ${clinic?.openinghours?.thursday}`}</h5>
+        <h5>{`\nFriday: ${clinic?.openinghours?.friday}`}</h5>
+        
        <Button disabled={handleClick}>Search Times</Button>
       </Content1>
      : 

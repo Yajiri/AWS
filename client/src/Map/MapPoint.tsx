@@ -12,9 +12,6 @@ const MapPoint = (props: ClinicType) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  console.log(JSON.stringify(props));
-  
-  
   /**
     if (opened) {
     console.log(props.name);
