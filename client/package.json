@@ -51,8 +51,7 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ],   
-   
+  ],
   "devDependencies": {
     "@types/googlemaps": "^3.43.3",
     "@types/styled-components": "^5.1.26"

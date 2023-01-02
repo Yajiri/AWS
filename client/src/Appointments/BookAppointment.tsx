@@ -65,7 +65,7 @@ const BookAppointment = () => {
 
  
   async function getData() {
-    const data = await clinicApi.getClinic("1")
+    const data = await clinicApi.getClinic("2")
     console.log(data.data)
     //setClinicData(data.data)
     return data
@@ -106,17 +106,17 @@ const BookAppointment = () => {
 
                 <Col>
                     <div className="card card-container">
-                    <h2 className="card-title">Test</h2>
+                    <h2 className="card-title">{clinicData.name.S}</h2>
                     <div className="card-text">
 
                         <h5>Opening hours</h5>
-                        <p> Monday:</p>
-                        <p> Tuesday: </p>
-                        <p> Wednesday: </p>
-                        <p> Thursday: </p>
-                        <p> Friday: </p>
+                        <p> Monday: {clinicData.openinghours.M.monday.S}</p>                        
+                        <p> Tuesday: {clinicData.openinghours.M.tuesday.S}</p>
+                        <p> Wednesday: {clinicData.openinghours.M.wednesday.S} </p>
+                        <p> Thursday: {clinicData.openinghours.M.thursday.S}</p>
+                        <p> Friday: {clinicData.openinghours.M.friday.S}</p>
                         <h5>Address</h5>
-                        <p></p>
+                        <p> {clinicData.address.S} </p>
                     </div> 
                     
                     </div>
