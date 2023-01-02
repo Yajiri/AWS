@@ -51,13 +51,13 @@ const Home = () => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
       setDate(selectedDate);
+      console.log(date)
     }
   }, [date]);
 
   
   let handleClick = false;
   if ( date && clinic) {
-    console.log(date);
     handleClick = false;
   } else {
    console.log("I am not clickable");
@@ -66,7 +66,7 @@ const Home = () => {
 
   let navigate = useNavigate(); 
   const routeChange = () =>{ 
-    let path = `/clinics/${clinic?.clinicId}/${date}`; 
+    let path = `/clinics/${clinic?.clinicId}/appointments/${date}`; 
     navigate(path);
   }
 
