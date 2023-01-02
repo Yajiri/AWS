@@ -66,7 +66,7 @@ const Home = () => {
 
   let navigate = useNavigate(); 
   const routeChange = () =>{ 
-    let path = `/appointments/${clinic?.clinicId}`; 
+    let path = `/clinics/${clinic?.clinicId}/${date}`; 
     navigate(path);
   }
 
