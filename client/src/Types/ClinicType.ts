@@ -1,5 +1,6 @@
 export default interface ClinicType {
   clinicId: number,
+  name: string,
   address: string,
   city: string,
   dentists: number,

@@ -3,6 +3,8 @@ import ClinicCard from "./ClinicCard"
 import ClinicPoint from "./ClinicPoint"
 import Overview from '../Home/Overview'
 
+import ClinicType from '../Types/ClinicType'
+
 type MapPointProps = {
   name: string
   dentists: number
@@ -18,6 +20,8 @@ const MapPoint = (props: MapPointProps) => {
 
   if (opened) {
     console.log(props.name);
+  } else {
+    console.log(props)
   }
   
   /**
