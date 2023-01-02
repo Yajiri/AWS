@@ -5,19 +5,15 @@ import Overview from '../Home/Overview'
 
 import ClinicType from '../Types/ClinicType'
 
-type MapPointProps = {
-  name: string
-  dentists: number
-  address: string
-  city: string
-}
+const MapPoint = (props: ClinicType) => {
+  const [opened, setIsOpened] = useState<boolean>(false);
+  const handleOnOpen = () => setIsOpened(true);
+  const handleOnClose = () => setIsOpened(false);
 
-const MapPoint = (props: MapPointProps) => {
-  const [opened, setIsOpened] = useState<boolean>(false)
-  const handleOnOpen = () => setIsOpened(true)
-  const handleOnClose = () => setIsOpened(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  console.log(JSON.stringify(props));
+  
   
   /**
     if (opened) {
@@ -40,9 +36,9 @@ const MapPoint = (props: MapPointProps) => {
 
   useEffect(() => {
     if (opened){
-      localStorage.setItem('clinic', JSON.stringify([props.name, props.dentists, props.address, props.city]));
+      localStorage.setItem('clinic', JSON.stringify(props));
     } else {
-      localStorage.setItem('clinic', '')
+      localStorage.removeItem('clinic');
     }
   }, [opened])
 

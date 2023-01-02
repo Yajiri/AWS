@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 
 const Content1 = styled.div`
@@ -26,6 +26,8 @@ city: string
 
 
 const Home = () => {
+  const ref = useRef(null);
+  const [opened, setIsOpened] = useState<boolean>(false);
   const [data, setClinic] = useState([]);
   const [selectedDate, setDate] = useState();
 
@@ -33,15 +35,16 @@ const Home = () => {
     const data = JSON.parse(localStorage.getItem('clinic') || '{}');
     if (data) {
       setClinic(data);
+      console.log(data);
     }
-  }, [data])
+  }, [ref]);
 
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
       setDate(selectedDate);
     }
-  }, [selectedDate])
+  }, [ref]);
 
   let handleClick = false;
 

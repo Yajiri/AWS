@@ -44,20 +44,14 @@ function Map({ center, zoom }: MapProps) {
     }
   }, [center, zoom]);
 
-  clinicApi.getAllClinics<GetClinicsResponse>()
+  useEffect(() => {
+    clinicApi.getAllClinics<GetClinicsResponse>()
     .then((response: any) => {
       let allClinics = response.data.Clinics;
       setClinic(allClinics);
       return setClinic(allClinics);
-    })
-    .catch((err: Error) => {
     });
-
-    /** 
-    console.log("\nvalue: " + JSON.stringify(Clinics) +
-    "\ntypeof: " + typeof Clinics);
-    **/
-  
+  }, [ref])
 
     return <div ref={ref} id="map" className={classes.map}>
     {Clinics.map((clinic : ClinicType) => (
@@ -70,10 +64,14 @@ function Map({ center, zoom }: MapProps) {
         key={clinic.clinicId}
       >
         <MapPoint
+          clinicId={clinic.clinicId}
           name={clinic.name}
-          dentists={clinic.dentists}
           address={clinic.address}
+          dentists={clinic.dentists}
           city={clinic.city}
+          openinghours={clinic.openinghours}
+          coordinate={clinic.coordinate}
+          owner={clinic.owner}
         />
       </OverlayContainer>
     ))}
