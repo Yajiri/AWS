@@ -18,14 +18,12 @@ const MapPoint = (props: MapPointProps) => {
   const handleOnClose = () => setIsOpened(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  if (opened) {
-    console.log(props.name);
-  } else {
-    console.log(props)
-  }
   
   /**
-   * useEffect(() => {
+    if (opened) {
+    console.log(props.name);
+    } 
+    useEffect(() => {
     function handleClickOutside(this: Document, event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpened(false)

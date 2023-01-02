@@ -47,16 +47,16 @@ function Map({ center, zoom }: MapProps) {
   clinicApi.getAllClinics<GetClinicsResponse>()
     .then((response: any) => {
       let allClinics = response.data.Clinics;
-      console.log(allClinics);
       setClinic(allClinics);
       return setClinic(allClinics);
     })
     .catch((err: Error) => {
-      console.log(err);
     });
 
+    /** 
     console.log("\nvalue: " + JSON.stringify(Clinics) +
     "\ntypeof: " + typeof Clinics);
+    **/
   
 
     return <div ref={ref} id="map" className={classes.map}>
