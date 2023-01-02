@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BookAppointmentForm from "./BookAppointmentForm";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -6,7 +6,10 @@ import Col from 'react-bootstrap/Col';
 import Navbar from "../Navbar/Navbar";
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
-import {clinicApi} from '../services/clinicApi'
+import {clinicApi} from '../services/clinicApi';
+//
+import IClinic  from '../types/IClinic'
+import ITimeSlots from "../types/ITimeSlots";
 
 const MainContainer = styled.div`
 height: 100vh;
@@ -37,53 +40,64 @@ interface Clinic {
   name: {S: string},
   address: {S: string},
   city: {S: string},
-  coordinate: {S: string},
-  openinghours: {S: string},
-  dentists: {S: string},
+  coordinate: {M: {
+    latitude: {N: string},
+    longitude: {N: string}
+  }},
+  openinghours: {M: {
+    monday: {S: string},
+    tuesday: {S: string},
+    wednesday: {S: string},
+    thursday: {S: string},
+    friday: {S: string}
+  }},
+  dentists: {N: string},
   owner: {S: string}
 };
 
-// const T : Clinic =  {
-//   clinicId: {N: "99"},
-//   name: {S: ""},
-//   address: {S: ""},
-//   city: {S: ""},
-//   coordinate: {S: ""},
-//   openinghours: {S: ""},
-//   dentists: {S: ""},
-//   owner: {S: ""}
-// }
-
-let clinicMetaData : Clinic;
 const BookAppointment = () => {
-  async function getClinic()  {
-    //let s : Clinic = T
-    let data = await clinicApi.getClinic("1");
-    const clinicMetaData = data.data;
-    console.log(clinicMetaData);
-    return clinicMetaData;
+
+  const [timeSlots,setTimeSlots] = useState<ITimeSlots>({
+    clinicId: "",
+    date: "",
+    timeSlots : []
+  })
+  const [clinicData,setClinicData] = useState<IClinic>({
+    clinicId: {N: ""},
+    name: {S: ""},
+    address: {S: ""},
+    city: {S: ""},
+    coordinate: {M: {
+      latitude: {N: ""},
+      longitude: {N: ""}
+    }},
+    openinghours: {M: {
+      monday: {S: ""},
+      tuesday: {S: ""},
+      wednesday: {S: ""},
+      thursday: {S: ""},
+      friday: {S: ""}
+    }},
+    dentists: {N: ""},
+    owner: {S: ""}
+    })
+
+ 
+  async function getData() {
+    const data = await clinicApi.getClinic("1")
+    console.log(data.data)
+    //setClinicData(data.data)
+    return data
+    
   }
+  useEffect(() => {
+    getData().then( resp =>{
+      setClinicData(resp.data)
+      console.log(clinicData.clinicId)
+    }
+    ) 
 
-  // const clinicData = {
-  //   id: clinicMetaData.clinicId, //"1"
-  //   name: clinicMetaData.name,// "Your Dentist",
-  //   owner: clinicMetaData.owner, //"Dan Tist",
-  //   dentists: clinicMetaData.dentists, //3,
-  //   address: clinicMetaData.address, //"Spannmålsgatan 20",
-  //   city: clinicMetaData.city, // "Gothenburg",
-  //   coordinate: clinicMetaData.coordinate, /*{
-  //     "longitude": 11.969388,
-  //     "latitude": 57.707619
-  //   }*/
-  //   openinghours: clinicMetaData.openinghours/*{
-  //     "monday": "9:00-17:00",
-  //     "tuesday": "8:00-17:00",
-  //     "wednesday": "7:00-16:00",
-  //     "thursday": "9:00-17:00",
-  //     "friday": "9:00-15:00"
-  //   }*/
-  // }
-
+  },[])
   const date = {
     D:10,
     m:12,
@@ -158,21 +172,20 @@ const BookAppointment = () => {
 
                 <Col>
                     <div className="card card-container">
-                    <h2 className="card-title">test</h2>
+                    <h2 className="card-title">Test</h2>
                     <div className="card-text">
-                    <button className="btn btn-primary btn-block" onClick={() => getClinic()}>Test get clinic</button>
 
-                        {/* <h5>Opening hours</h5>
-                        <p> Monday: {clinicData.openinghours.monday}</p>
-                        <p> Tuesday: {clinicData.openinghours.tuesday}</p>
-                        <p> Wednesday: {clinicData.openinghours.wednesday}</p>
-                        <p> Thursday: {clinicData.openinghours.thursday}</p>
-                        <p> Friday: {clinicData.openinghours.friday}</p>
+                        <h5>Opening hours</h5>
+                        <p> Monday:</p>
+                        <p> Tuesday: </p>
+                        <p> Wednesday: </p>
+                        <p> Thursday: </p>
+                        <p> Friday: </p>
                         <h5>Address</h5>
-                        <p>{clinicData.address} {clinicData.city}</p>
-                    </div> */}
+                        <p></p>
+                    </div> 
                     
-                    </div></div>
+                    </div>
                     
                 </Col>
             </Row>

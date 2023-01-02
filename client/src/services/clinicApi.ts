@@ -1,15 +1,25 @@
 import { Api } from './Api'
 
 interface Clinic {
-    clinicId: {N: string},
-    name: {S: string},
-    address: {S: string},
-    city: {S: string},
-    coordinate: {S: string},
-    openinghours: {S: string},
-    dentists: {S: string},
-    owner: {S: string},
-  };
+  clinicId: {N: string},
+  name: {S: string},
+  address: {S: string},
+  city: {S: string},
+  coordinate: {M: {
+    latitude: {N: string},
+    longitude: {N: string}
+  }},
+  openinghours: {M: {
+    monday: {S: string},
+    tuesday: {S: string},
+    wednesday: {S: string},
+    thursday: {S: string},
+    friday: {S: string}
+  }},
+  dentists: {N: string},
+  owner: {S: string}
+};
+
 
 export const clinicApi = {
   getAllClinics: () => {

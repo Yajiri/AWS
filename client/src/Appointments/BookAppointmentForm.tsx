@@ -90,7 +90,6 @@ class BookAppointmentForm extends React.Component<any,any> {
                     <div className="form-group">
                         <Container>
                             <Col>
-                            
                                 <Row>
                                     { this.checkAvailabitily(this.state.timeSlots) ? (
                                         <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
