@@ -46,7 +46,6 @@ const Underline = styled.div`
 const Navbar = () => {
   return (
     <Nav>
-
         <MenuLink to="/">
           <Logo />
         </MenuLink>
@@ -59,12 +58,6 @@ const Navbar = () => {
             </MenuLink>
             <MenuLink to="/appointments">
                 <span>Appointments</span>
-                <Underline>
-                    
-                </Underline>
-            </MenuLink>
-            <MenuLink to="/profile">
-                <span>Profile</span>
                 <Underline>
                     
                 </Underline>

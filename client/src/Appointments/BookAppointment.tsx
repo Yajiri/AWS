@@ -65,7 +65,7 @@ const BookAppointment = () => {
 
  
   async function getData() {
-    const data = await clinicApi.getClinic("2")
+    const data = await clinicApi.getClinic("1")
     console.log(data.data)
     //setClinicData(data.data)
     return data
@@ -89,7 +89,34 @@ const BookAppointment = () => {
 
   }
 
-
+  const bookingFormInfo={
+    dentists: 3,
+    clinicId: 1,
+    date: "20230106",
+    clinicIDDate:"1_12-11-2022",
+    timeSlots: [
+      {time:"7:00",available:false},
+      {time:"7:00", available:false},
+      {time:"7:30", available:false},
+      {time:"8:00", available:false},
+      {time:"8:30", available:false},
+      {time:"9:00", available:false},
+      {time:"9:30", available:false},
+      {time:"10:00", available:false},
+      {time:"10:30", available:false},
+      {time:"11:00", available:false},
+      {time:"11:30", available:true},
+      //lunch
+      // {time:"12:00", available:false},
+      // {time:"12:30", available:false},
+      {time:"14:00", available:false},
+      {time:"14:30", available:true},
+      //fika
+      // {time:"15:00", available:false},
+      {time:"15:30", available:false},
+    ]
+ 
+  }
 
   return (
     <MainContainer>
