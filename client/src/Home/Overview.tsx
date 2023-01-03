@@ -40,10 +40,15 @@ const Home = () => {
   const handleOnOpen = () => setIsOpened(true);
   const handleOnClose = () => setIsOpened(false);
 
+
+  // useEffect listener should be equal to clinic and date
+
+
   useEffect(() => {
     const selectedClinic = JSON.parse(localStorage.getItem('clinic') || '{}');
     if (selectedClinic) {
-      setClinic(selectedClinic);
+      if (selectedClinic){
+      setClinic(selectedClinic);}
     }
   }, [clinic]);
 
@@ -53,11 +58,11 @@ const Home = () => {
       setDate(selectedDate);
       console.log(date)
     }
-  }, [date]);
+  }, [clinic]);
 
   
   let handleClick = false;
-  if ( date && clinic) {
+  if ( date && clinic?.clinicId ) {
     handleClick = false;
   } else {
    console.log("I am not clickable");
@@ -71,7 +76,7 @@ const Home = () => {
   }
 
   return(<div ref={containerRef}>
-    {clinic?.clinicId ?
+    {clinic?.clinicId && date ?
       <Content1>
         <h3>Clinic Information</h3>
 
