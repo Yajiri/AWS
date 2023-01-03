@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { appointmentApi } from "../services/appointment";
 
-import AppointmentType from "../types/AppointmentType";
+import AppointmentType from "../Types/AppointmentType";
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
