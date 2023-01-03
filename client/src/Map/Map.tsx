@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import { useEffect, useRef, useState } from "react";
-import { clinicApi } from "../services/clinic";
+import { clinicApi } from "../services/clinicApi";
 import MapPoint from "./MapPoint";
 import OverlayContainer from "./OverlayContainer";
 

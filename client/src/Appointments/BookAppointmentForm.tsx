@@ -109,13 +109,6 @@ class BookAppointmentForm extends React.Component<any,any> {
         return(this.state.selectedTime!== "" && this.validateEmail())
     }
 
-     
-    // function routeChange(){ 
-    //     let navigate = useNavigate();
-    //     let path = `/`; 
-    //     navigate(path);
-    // }
-
     render(){
         return(    
             <div className="card card-container">

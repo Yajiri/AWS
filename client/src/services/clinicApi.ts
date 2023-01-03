@@ -1,4 +1,7 @@
 import { Api } from './Api'
+import axios, { AxiosError, AxiosResponse } from 'axios';
+
+import ClinicType from '../Types/ClinicType'
 
 interface Clinic {
   clinicId: {N: string},
@@ -22,8 +25,8 @@ interface Clinic {
 
 
 export const clinicApi = {
-  getAllClinics: () => {
-    Api.get(`/clinics`)
+  getAllClinics: async <ClinicType>() => {
+    return await Api.get<ClinicType[]>(`/clinics`);
   },
 
   getClinic: async (clinicId: string) => {
