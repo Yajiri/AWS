@@ -1,4 +1,4 @@
-import ITimeSlots from '../types/ITimeSlots'
+import ITimeSlots from '../Types/ITimeSlots'
 import { Api } from './Api'
 
 export const appointmentApi = {

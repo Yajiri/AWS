@@ -1,7 +1,7 @@
 import { Api } from './Api'
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import AppointmentType from '../types/AppointmentType';
-import ITimeSlots from '../types/ITimeSlots';
+import AppointmentType from '../Types/AppointmentType';
+import ITimeSlots from '../Types/ITimeSlots';
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 

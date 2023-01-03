@@ -8,8 +8,8 @@ import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
 import {clinicApi} from '../services/clinicApi';
 import { appointmentApi } from "../services/appointmentApi";
-import IClinic  from '../types/IClinic'
-import ITimeSlots from "../types/ITimeSlots";
+import IClinic  from '../Types/IClinic'
+import ITimeSlots from "../Types/ITimeSlots";
 
 const MainContainer = styled.div`
 height: 100vh;
