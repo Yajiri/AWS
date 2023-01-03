@@ -22,7 +22,7 @@ function App() {
           </Wrapper>
           } 
         />
-        <Route path='/appointments' element={<BookAppointment />} />
+        <Route path={`/clinics/:clinicId/appointments/:date`} element={<BookAppointment />} />
       </Routes>
       </Router>
       

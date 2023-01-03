@@ -3,25 +3,20 @@ import ClinicCard from "./ClinicCard"
 import ClinicPoint from "./ClinicPoint"
 import Overview from '../Home/Overview'
 
-type MapPointProps = {
-  name: string
-  dentists: number
-  address: string
-  city: string
-}
+import ClinicType from '../Types/ClinicType'
 
-const MapPoint = (props: MapPointProps) => {
-  const [opened, setIsOpened] = useState<boolean>(false)
-  const handleOnOpen = () => setIsOpened(true)
-  const handleOnClose = () => setIsOpened(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+const MapPoint = (props: ClinicType) => {
+  const [opened, setIsOpened] = useState<boolean>(false);
+  const handleOnOpen = () => setIsOpened(true);
+  const handleOnClose = () => setIsOpened(false);
 
-  if (opened) {
-    console.log(props.name);
-  }
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+
   /**
-   * useEffect(() => {
+    if (opened) {
+    console.log(props.name);
+    } 
+    useEffect(() => {
     function handleClickOutside(this: Document, event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpened(false)
@@ -38,9 +33,9 @@ const MapPoint = (props: MapPointProps) => {
 
   useEffect(() => {
     if (opened){
-      localStorage.setItem('clinic', JSON.stringify([props.name, props.dentists, props.address, props.city]));
+      localStorage.setItem('clinic', JSON.stringify(props));
     } else {
-      localStorage.setItem('clinic', '')
+      localStorage.removeItem('clinic');
     }
   }, [opened])
 
