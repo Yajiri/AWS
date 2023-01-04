@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate} from "react-router-dom";
 import { appointmentApi } from "../services/appointment";
 
 import AppointmentType from "../Types/AppointmentType";
@@ -13,17 +13,18 @@ import * as EmailValidator from 'email-validator';
 import "bootstrap/dist/css/bootstrap.min.css";
 //import { appointmentApi } from "../services/appointmentApi";
 //import { clinicApi } from "../services/clinicApi";
-
-
 // const validator = require('validator');
+
 
 class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
         super(props);
         this.state = {
-            timeSlots :props.data.timeSlots,
+            navigation: props.data.navigation,
+            bookingData:props.data,
+            timeSlots:[],
             clinicId: props.data.clinicId,
-            date: props.data.date,
+            date: '',
             seletedTime: '',
             time: '',
             email: '',
@@ -38,15 +39,28 @@ class BookAppointmentForm extends React.Component<any,any> {
     }
 
     componentDidMount(): void {
-        async function getTimeSlots() {
-            const data = await appointmentApi.getAppointments("1","20230104"); //to be replaced with data from props
+        console.log(this.state.bookingData)
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
+        const id = this.state.bookingData.clinicId
+        async function getTimeSlots(date:string) {
+            //const data = await appointmentApi.getAppointments("1","20230104"); //to be replaced with data from props
+            const data = await appointmentApi.getAppointments(id,dateString); //to be replaced with data from props
+            
             return data;
         }
 
-        getTimeSlots().then(resp => {
+        getTimeSlots(dateString).then(resp => {
             console.log(resp.data.timeSlots);
             this.setState({timeSlots: resp.data.timeSlots});  
-          })
+          }).catch(err => {
+            console.log(err)
+            console.log( this.props.navigation)
+            //this.props.navigation.navigate("/unavailable")
+            //return redirect('/unavailable')
+            // let navigate = useNavigate()
+            // let path = `/unavailable`; 
+            // navigate(path);
+        })
     }
 
     handleChange(event:any) {
@@ -207,3 +221,68 @@ class BookAppointmentForm extends React.Component<any,any> {
 }
 
 export default BookAppointmentForm;
+
+
+
+// attempt to refactor as functional component
+// const BookAppointmentForm = (props:any) => {
+//     const navigate = useNavigate();
+
+//     const [timeSlots,setTimeSlots] = useState([]);
+//     const [formData,setFormData] = useState();
+//     const [time,setTime] = useState();
+//     const [email,setEmail] = useState();
+
+
+//     async function getData(clinicId: string, date:string) {
+//         const data = await appointmentApi.getAppointments(clinicId,date);
+//         console.log(data.data);
+//         //setClinicData(data.data)
+//         return data;
+        
+//     }
+//     useEffect(() => {
+//         const clinicId=props.data.clinicID;
+//         const date = props.data.y + "-" + props.data.m + "-" + props.data.d;
+        
+//         getData(clinicId, date).then( resp =>{
+//             setTimeSlots(resp.data.timeSlots)
+//             console.log(timeSlots)
+//         }).catch(err => {
+//             console.log(err);
+//             navigate('/unavailable')
+
+//         }); 
+
+//     },[])
+
+
+//     return(
+//         <p>{props.data.dayOfWeek}</p>
+//     )
+// }
+
+
+// export default BookAppointmentForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,6 +5,7 @@ import MapPoint from "./MapPoint";
 import OverlayContainer from "./OverlayContainer";
 
 import ClinicType from '../Types/ClinicType';
+import { useNavigate } from "react-router-dom";
 
 type MapProps = {
   center: google.maps.LatLngLiteral
@@ -27,6 +28,7 @@ function Map({ center, zoom }: MapProps) {
   const [map, setMap] = useState<google.maps.Map<Element> | null>(null)
   const [clinics, setClinic] = useState([]);
   const classes = useStyles();
+  let navigate = useNavigate();
 
   useEffect(() => {
     if (ref.current) { 
@@ -49,6 +51,9 @@ function Map({ center, zoom }: MapProps) {
       let allClinics = response.data.Clinics;
       setClinic(allClinics);
       return setClinic(allClinics);
+    }).catch(err => {
+      console.log(err)
+      //navigate("/unavailable")
     });
   }, [ref])
 

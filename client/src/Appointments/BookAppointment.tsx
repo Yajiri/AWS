@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import BookAppointmentForm from "./BookAppointmentForm";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -9,7 +10,6 @@ import { breakpoints } from '../MediaQueries';
 import {clinicApi} from '../services/clinicApi';
 import { appointmentApi } from "../services/appointmentApi";
 import IClinic  from '../Types/IClinic'
-import ITimeSlots from "../Types/ITimeSlots";
 
 const MainContainer = styled.div`
 height: 100vh;
@@ -37,12 +37,68 @@ padding-top: 6rem;
 `
 
 const BookAppointment = () => {
+  const navigate = useNavigate();
+  //const navigation = useNavigation()
+  const {date} :any = useParams();
+  const dateFormat = new Date(date);
+  const {clinicId} = useParams();
+  const data :any= {
+    //navigation: navigation,
+    clinicId: clinicId,
+    d:formatDay(dateFormat.getDate()),
+    m:formatMonth(dateFormat.getMonth() + 1),
+    y:dateFormat.getFullYear(),
+    dayOfWeek:getDayOfWeek(date),
+  }
 
-  const [timeSlots,setTimeSlots] = useState<ITimeSlots>({
-    clinicId: "",
-    date: "",
-    timeSlots : []
-  })
+  function formatDay(day:number){
+    if(day<=9){
+      return "0"+day
+    }
+    return day
+  }
+
+  function formatMonth(month:number){
+    if(month<=9){
+      console.log(month)
+      return "0"+month
+    }
+    return month
+  }
+
+  function getDayOfWeek(date :any) {
+    const weekday = new Date(date).getDay()
+    console.log(weekday) 
+    switch(weekday){
+      case 0:
+        return "Sunday";
+      break;
+      case 1:
+        return "Monday";
+      break;
+      case 2:
+        return "Tuesday";
+      break;
+      
+      case 3:
+        return "Wednesday";
+      break;
+      
+      case 4:
+        return "Thursday";
+      break;
+      
+      case 5:
+        return "Friday";     
+      break;
+      
+      case 6:
+        return "Saturday";
+      break;
+    }
+
+  }
+
   const [clinicData,setClinicData] = useState<IClinic>({
     clinicId: {N: ""},
     name: {S: ""},
@@ -63,60 +119,39 @@ const BookAppointment = () => {
     owner: {S: ""}
     })
 
- 
-  async function getData() {
-    const data = await clinicApi.getClinic("1")
+
+
+
+  async function getClinicData(clinicId: any) {
+    const data = await clinicApi.getClinic(clinicId)
     console.log(data.data)
-    //setClinicData(data.data)
     return data
     
   }
-
-
+  async function getAppointmentData(clinicId:any, date: string) {
+    const data = await appointmentApi.getAppointments(clinicId,date);
+    console.log(data.data)
+    return data;
+  }
   useEffect(() => {
-    getData().then( resp =>{
+    const date = data.y + "-" + data.m + "-" +data.d;
+    getClinicData(clinicId).then( resp =>{
       setClinicData(resp.data)
       console.log(clinicData)
-    }
-    ) 
+    }).catch(err => {
+      console.log(err)
+      navigate('/unavailable')
+    }) 
+
+    getAppointmentData(clinicId,date).then( resp =>{
+      console.log(resp.data)
+    }).catch(err => {
+      console.log(err)
+      navigate('/unavailable')
+    })
 
   },[])
-  const date = {
-    D:10,
-    m:12,
-    y:2022,
-    d:"Wed"
 
-  }
-
-  const bookingFormInfo={
-    dentists: 3,
-    clinicId: 1,
-    date: "20230106",
-    clinicIDDate:"1_12-11-2022",
-    timeSlots: [
-      {time:"7:00",available:false},
-      {time:"7:00", available:false},
-      {time:"7:30", available:false},
-      {time:"8:00", available:false},
-      {time:"8:30", available:false},
-      {time:"9:00", available:false},
-      {time:"9:30", available:false},
-      {time:"10:00", available:false},
-      {time:"10:30", available:false},
-      {time:"11:00", available:false},
-      {time:"11:30", available:true},
-      //lunch
-      // {time:"12:00", available:false},
-      // {time:"12:30", available:false},
-      {time:"14:00", available:false},
-      {time:"14:30", available:true},
-      //fika
-      // {time:"15:00", available:false},
-      {time:"15:30", available:false},
-    ]
- 
-  }
 
   return (
     <MainContainer>
@@ -126,8 +161,8 @@ const BookAppointment = () => {
             <Row>
                 <Col>
                 <div className="card card-container">
-                    <h3>Available time slots for {date.d} {date.D}.{date.m}.{date.y} </h3>
-                        <BookAppointmentForm data={timeSlots}/>
+                    <h3>Available time slots for {data.dayOfWeek}, {data.d}.{data.m}.{data.y} </h3>
+                        <BookAppointmentForm data={data}/>
                     </div>
                 </Col>
 

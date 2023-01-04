@@ -35,7 +35,8 @@ const Home = () => {
   const [opened, setIsOpened] = useState<boolean>(false);
   // const [data, setData] = useState([]);
   const [clinic, setClinic] = useState<ClinicType>();
-  const [date, setDate] = useState();
+  const [date, setDate] = useState("0000-00-00");
+
 
   const handleOnOpen = () => setIsOpened(true);
   const handleOnClose = () => setIsOpened(false);
@@ -56,7 +57,6 @@ const Home = () => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
       setDate(selectedDate);
-      console.log(date)
     }
   }, [clinic]);
 

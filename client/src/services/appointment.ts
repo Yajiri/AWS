@@ -11,6 +11,6 @@ export const appointmentApi = {
     return result;
   },
   makeAppointment: async <T>(data: AppointmentType) => {
-    return await Api.post<T>(`/appointments`, data);
+    return await Api.post<T>(`/schedule`, data);
   }
 }
