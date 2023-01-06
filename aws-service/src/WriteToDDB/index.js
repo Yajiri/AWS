@@ -144,7 +144,7 @@ const writeBooking = async function(record) { // Helper function that writes a n
 };
 
 /* 
- *Lines 150 - 236 authored by Gabriela Istrate
+ *Lines 131 - 215 authored by Ella 
  */
 
 const parseOpeningHours = function(openingHours, date) {
@@ -264,17 +264,21 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                 " input: " + JSON.stringify(inputTime));
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
-                allBookings.splice(allBookings, 0, email); // add email to email array
-                found.bookings = allBookings;
-                clog("after splice, record:" + JSON.stringify(found) );
+                if (allBookings.includes(email)) {
+                    denialMail(event) // denial mail
+                    clog("Error: you have already booked an appointment for this time.");
+                } else {
+                    allBookings.splice(allBookings, 0, email); // add email to email array
+                    found.bookings = allBookings;
+                    clog("after splice, record:" + JSON.stringify(found) );
 
-                let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
-                record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record  
-                acceptanceMail(event);
-                clog(
-                    "index in time slot: " + JSON.stringify(foundIndex) +
-                    "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
-
+                    let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
+                    record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record  
+                    acceptanceMail(event); // send acceptance confirmation email to end user
+                    clog(
+                        "index in time slot: " + JSON.stringify(foundIndex) +
+                        "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
+                }
             } else { // When a time is fully booked, return error email
                 denialMail(event);
                 clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
