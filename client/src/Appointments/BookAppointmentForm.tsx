@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import React from "react";
+import { Link} from "react-router-dom";
 import { appointmentApi } from "../services/appointment";
 
 import AppointmentType from "../Types/AppointmentType";
@@ -11,10 +11,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import * as EmailValidator from 'email-validator';
 import "bootstrap/dist/css/bootstrap.min.css";
-//import { appointmentApi } from "../services/appointmentApi";
-//import { clinicApi } from "../services/clinicApi";
-// const validator = require('validator');
-
 
 class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
@@ -43,8 +39,7 @@ class BookAppointmentForm extends React.Component<any,any> {
         const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
         const id = this.state.bookingData.clinicId
         async function getTimeSlots(date:string) {
-            //const data = await appointmentApi.getAppointments("1","20230104"); //to be replaced with data from props
-            const data = await appointmentApi.getAppointments(id,dateString); //to be replaced with data from props
+            const data = await appointmentApi.getAppointments(id,dateString); 
             
             return data;
         }
@@ -55,11 +50,6 @@ class BookAppointmentForm extends React.Component<any,any> {
           }).catch(err => {
             console.log(err)
             console.log( this.props.navigation)
-            //this.props.navigation.navigate("/unavailable")
-            //return redirect('/unavailable')
-            // let navigate = useNavigate()
-            // let path = `/unavailable`; 
-            // navigate(path);
         })
     }
 
@@ -82,11 +72,11 @@ class BookAppointmentForm extends React.Component<any,any> {
         console.log(event);
         console.log(this.checkInputNotNull());
         this.setState({loading:true});
-        //this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
-
+        
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
         const data: AppointmentType = {
-            clinicId: this.state.clinicId,
-            date: this.state.date,
+            clinicId: this.state.bookingData.clinicId,
+            date: dateString,
             time: this.state.selectedTime,
             email:  this.state.email,
         }
@@ -113,7 +103,6 @@ class BookAppointmentForm extends React.Component<any,any> {
         for(const element of timeSlots){
             if(element.available===true){
                 isAvailable=true;
-                //console.log(element)
             }
         }
         return isAvailable;
@@ -221,68 +210,3 @@ class BookAppointmentForm extends React.Component<any,any> {
 }
 
 export default BookAppointmentForm;
-
-
-
-// attempt to refactor as functional component
-// const BookAppointmentForm = (props:any) => {
-//     const navigate = useNavigate();
-
-//     const [timeSlots,setTimeSlots] = useState([]);
-//     const [formData,setFormData] = useState();
-//     const [time,setTime] = useState();
-//     const [email,setEmail] = useState();
-
-
-//     async function getData(clinicId: string, date:string) {
-//         const data = await appointmentApi.getAppointments(clinicId,date);
-//         console.log(data.data);
-//         //setClinicData(data.data)
-//         return data;
-        
-//     }
-//     useEffect(() => {
-//         const clinicId=props.data.clinicID;
-//         const date = props.data.y + "-" + props.data.m + "-" + props.data.d;
-        
-//         getData(clinicId, date).then( resp =>{
-//             setTimeSlots(resp.data.timeSlots)
-//             console.log(timeSlots)
-//         }).catch(err => {
-//             console.log(err);
-//             navigate('/unavailable')
-
-//         }); 
-
-//     },[])
-
-
-//     return(
-//         <p>{props.data.dayOfWeek}</p>
-//     )
-// }
-
-
-// export default BookAppointmentForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

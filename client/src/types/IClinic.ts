@@ -24,7 +24,7 @@ export default interface IClinic {
     address: {
         S: string
     },
-    openinghours: { //to be changed to camel case when DB property names are updated
+    openinghours: { 
         M: {
             friday: {
                 S: string

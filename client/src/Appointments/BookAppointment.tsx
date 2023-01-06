@@ -8,7 +8,7 @@ import Navbar from "../Navbar/Navbar";
 import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
 import {clinicApi} from '../services/clinicApi';
-import { appointmentApi } from "../services/appointmentApi";
+import { appointmentApi } from "../services/appointment";
 import IClinic  from '../Types/IClinic'
 
 const MainContainer = styled.div`
