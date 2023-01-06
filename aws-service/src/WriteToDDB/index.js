@@ -72,7 +72,8 @@ exports.handler = function(event, context, callback) {
         } else {
             // why is data null or undefined? this is a system error, throw
             // the circuit breaker
-            denialMail(detail);
+            const sysError = "as we are experiencing a system error."
+            denialMail(detail, sysError);
             callback(err, null);
         }
     }); 
@@ -252,7 +253,8 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
         
         if ( (! found || typeof found === "undefined" ) ) { // this timeslot is not available
             // send a mail saying the requested date is not available for booking (failed)
-            denialMail(event);
+            const doesNotExist = "as appointments for the selected time does not exist."
+            denialMail(event, doesNotExist);
             clog("didn't find the record");
 
         } else {  // the timeslot is available, see if it is available        
@@ -265,8 +267,9 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
                 if (allBookings.includes(email)) {
-                    message = "due to a previously confirmed appointment you have made for this date and time."
-                    denialMail(event, message) // denial mail
+                    const alreadyExists = "due to a previously confirmed appointment you have made for this date and time."
+                    clog(alreadyExists)
+                    denialMail(event, alreadyExists) // denial mail
                     clog("Error: you have already booked an appointment for this time.");
                 } else {
                     allBookings.splice(allBookings, 0, email); // add email to email array
@@ -281,8 +284,8 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                         "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
                 }
             } else { // When a time is fully booked, return error email
-                message = "as we are fully booked for this date and time."
-                denialMail(event);
+                const fullyBooked = "as we are fully booked for this date and time."
+                denialMail(event, fullyBooked);
                 clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
             }
             clog("all bookings:" + JSON.stringify(allBookings));
