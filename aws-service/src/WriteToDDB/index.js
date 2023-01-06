@@ -12,15 +12,16 @@ function clog (message){
 
 exports.handler = function(event, context, callback) { 
     let detail = event.detail;
+
     let queryRecord = {         
         TableName : "DentistimoAppointmentsTable",         
         Key: {             
-            "clinicId": detail.clinicId,             
+            "clinicId": parseInt(detail.clinicId),             
             "date": detail.date,                    
         } 
     };
     
-    clog(detail);
+    clog("detail: "+ JSON.stringify(detail));
     
     documentClient.get(queryRecord, async function(err, data){        
         
@@ -82,7 +83,7 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
     let params = {         
         TableName : "DentistimoClinicsTable",         
         Key: {             
-            "clinicId": event.clinicId
+            "clinicId": parseInt(event.clinicId)
         } 
     };  
     const myResolve = (myParam) => {
@@ -107,7 +108,7 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
 
 const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
     let newRecord = {                 
-      "clinicId": event.clinicId,
+      "clinicId": parseInt(event.clinicId),
       "date": event.date,
       "timeSlots": clinicHours
     };  
@@ -143,23 +144,23 @@ const writeBooking = async function(record) { // Helper function that writes a n
 };
 
 /* 
- *Lines 131 - 215 authored by Ella 
+ *Lines 150 - 236 authored by Gabriela Istrate
  */
 
 const parseOpeningHours = function(openingHours, date) {
     let openingHoursForDay;
     
-    clog("date for ella: " + typeof date);
+    // clog("date for ella: " + typeof date);
 
-    clog("OP " + JSON.stringify(openingHours));
+    // clog("OP " + JSON.stringify(openingHours));
     
-    const y = date.slice(0,4);
-    const m = date.slice(4,6);
-    const d = date.slice(6,8);
+    // const y = date.slice(0,4);
+    // const m = date.slice(4,6);
+    // const d = date.slice(6,8);
     
-    const ymd = y + "-" + m + "-" + d;
+    // const ymd = y + "-" + m + "-" + d;
     
-    const parsedDate = new Date(ymd);
+    const parsedDate = new Date(date);
     const weekday = parsedDate.getDay();
     clog("weekDay" + weekday);
     
@@ -283,8 +284,6 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
     }
     return record;
 };
-
-
 const acceptanceMail = async function (event) {
   var params = {
     Destination: {
@@ -297,7 +296,7 @@ const acceptanceMail = async function (event) {
       },
       Subject: { Data: "Successful booking" },
     },
-    Source: "jensp6@hotmail.com",
+    Source: "dentistimogoteborg@gmail.com",
   };
   return ses.sendEmail(params).promise();
 };
@@ -314,7 +313,7 @@ const denialMail = async function (event) {
       },
       Subject: { Data: "Unsuccessful booking" },
     },
-    Source: "jensp6@hotmail.com",
+    Source: "dentistimogoteborg@gmail.com",
   };
   return ses.sendEmail(params).promise();
 };

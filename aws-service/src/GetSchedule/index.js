@@ -153,15 +153,15 @@ exports.handler = async(event, context, callback) => {
     function parseOpeningHours(openingHours, date) {
         let openingHoursForDay;
 
-        console.log("OP " + JSON.stringify(openingHours));
+        // console.log("OP " + JSON.stringify(openingHours));
         
-        const y = date.slice(0,4)
-        const m = date.slice(4,6)
-        const d = date.slice(6,8)
+        // const y = date.slice(0,4)
+        // const m = date.slice(4,6)
+        // const d = date.slice(6,8)
         
-        const ymd = y + "-" + m + "-" + d
+        // const ymd = y + "-" + m + "-" + d
         
-        const parsedDate = new Date(ymd)
+        const parsedDate = new Date(date)
         const weekday = parsedDate.getDay()
         console.log("weekDay" + weekday)
         
