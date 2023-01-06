@@ -265,7 +265,8 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
                 if (allBookings.includes(email)) {
-                    denialMail(event) // denial mail
+                    message = "due to a previously confirmed appointment you have made for this date and time."
+                    denialMail(event, message) // denial mail
                     clog("Error: you have already booked an appointment for this time.");
                 } else {
                     allBookings.splice(allBookings, 0, email); // add email to email array
@@ -280,6 +281,7 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                         "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
                 }
             } else { // When a time is fully booked, return error email
+                message = "as we are fully booked for this date and time."
                 denialMail(event);
                 clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
             }
@@ -295,8 +297,8 @@ const acceptanceMail = async function (event) {
     },
     Message: {
       Body: {
-        Text: { Data: "Your booking was successful for " + event.date + 
-            " at " + event.time + "!" },
+        Text: { Data: "Welcome! Your booking request was successful for " + event.date + 
+            " at " + event.time + ". Thank you for choosing Dentistimo!" },
       },
       Subject: { Data: "Successful booking" },
     },
@@ -305,17 +307,17 @@ const acceptanceMail = async function (event) {
   return ses.sendEmail(params).promise();
 };
 
-const denialMail = async function (event) {
+const denialMail = async function (event, message) {
   var params = {
     Destination: {
       ToAddresses: [event.email],
     },
     Message: {
       Body: {
-        Text: { Data: "Your booking was unsuccessful for " + event.date + 
-            " at " + event.time + ". Please try again."},
+        Text: { Data: "Hello! We regret to inform you that your booking request for " + event.date + 
+            " at " + event.time + "cannot be completed, " + message + " Please try again."},
       },
-      Subject: { Data: "Unsuccessful booking" },
+      Subject: { Data: "Unsuccessful booking request" },
     },
     Source: "dentistimogoteborg@gmail.com",
   };
