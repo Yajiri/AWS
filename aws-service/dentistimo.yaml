@@ -1,11 +1,84 @@
 Transform: AWS::Serverless-2016-10-31
+
 Resources:
+
   dentistimoEventBus:
     Type: AWS::Events::EventBus
     Properties:
       Name: dentistimoEventBus
+    DeletionPolicy: Delete
+  EventBusPolicy0:
+    Type: AWS::Events::EventBusPolicy
+    Properties:
+      StatementId: allow_all_accounts_from_organization_to_put_events
+      EventBusName: dentistimoEventBus
+      Statement:
+        Sid: allow_all_accounts_from_organization_to_put_events
+        Effect: Allow
+        Principal: '*'
+        Action: events:PutEvents
+        Condition:
+          StringEquals:
+            aws:PrincipalOrgID: o-nc9mlzundg
+        Resource:
+          Fn::GetAtt:
+            - dentistimoEventBus
+            - Arn
+    DependsOn:
+      - dentistimoEventBus
+  EventBusPolicy1:
+    Type: AWS::Events::EventBusPolicy
+    Properties:
+      StatementId: allow_account_to_manage_rules_they_created
+      EventBusName: dentistimoEventBus
+      Statement:
+        Sid: allow_account_to_manage_rules_they_created
+        Effect: Allow
+        Principal: '*'
+        Action:
+          - events:PutRule
+          - events:PutTargets
+          - events:DeleteRule
+          - events:RemoveTargets
+          - events:DisableRule
+          - events:EnableRule
+          - events:TagResource
+          - events:UntagResource
+          - events:DescribeRule
+          - events:ListTargetsByRule
+          - events:ListTagsForResource
+        Condition:
+          StringEquals:
+            aws:PrincipalOrgID: o-nc9mlzundg
+        Resource:
+          Fn::GetAtt:
+            - dentistimoEventBus
+            - Arn
+    DependsOn:
+      - dentistimoEventBus
+  bookAppointmentDDBRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: dentistimoEventBus
+      EventPattern:
+        detail-type:
+          - equals-ignore-case: CreateAppointment
+      Name: bookAppointmentDDBRule
+      State: ENABLED
+      Targets:
+        - Id: !Ref bookAppointmentDDB
+          Arn: !GetAtt bookAppointmentDDB.Arn
+  bookAppointmentDDBPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt bookAppointmentDDB.Arn
+      Principal: !Sub events.${AWS::URLSuffix}
+      SourceArn: !GetAtt bookAppointmentDDBRule.Arn     
+
   dentistimo:
     Type: AWS::Serverless::Api
+    Name: dentistimo
     Properties:
       Name: !Sub
         - ${ResourceName} From Stack ${AWS::StackName}
@@ -43,25 +116,15 @@ Resources:
                 type: aws_proxy
                 uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${bookAppointmentEB.Arn}/invocations
               responses: {}
-            #get:
-            #  x-amazon-apigateway-integration:
-            #    httpMethod: POST
-            #    type: aws_proxy
-            #    uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getAppointment.Arn}/invocations
-            #  responses: {}
-            #delete:
-            #  x-amazon-apigateway-integration:
-            #    httpMethod: POST
-            #    type: aws_proxy
-            #    uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${cancelAppointment.Arn}/invocations
-            #  responses: {}
-      EndpointConfiguration: REGIONAL
+
+      EndpointConfiguration: EDGE
       TracingEnabled: true
       Cors:
         AllowMethods: '''POST, GET, DELETE'''
         AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
         AllowOrigin: '''*'''
         MaxAge: '''600'''
+
   getClinic:
     Type: AWS::Serverless::Function
     Properties:
@@ -163,37 +226,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${getSchedule}
-  #getAppointment:
-  #  Type: AWS::Serverless::Function
-  #  Properties:
-  #    Description: !Sub
-  #      - Stack ${AWS::StackName} Function ${ResourceName}
-  #      - ResourceName: getAppointment
-  #    CodeUri: s3://dentistimo/ReadFromDDB.zip
-  #    Handler: index.handler
-  #    Runtime: nodejs12.x
-  #    MemorySize: 3008
-  #    Timeout: 30
-  #    Tracing: Active
-  #    Events:
-  #      dentistimoGETclinicsidappointmentsid:
-  #        Type: Api
-  #        Properties:
-  #          Path: /clinics/{clinicId}/appointments/{appointmentId}
-  #          Method: GET
-  #          RestApiId: !Ref dentistimo
-  #    Environment:
-  #      Variables:
-  #        TABLE_NAME: !Ref table
-  #        TABLE_ARN: !GetAtt table.Arn
-  #    Policies:
-  #      - DynamoDBCrudPolicy:
-  #          TableName: !Ref table
-  #getAppointmentLogGroup:
-  #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Delete
-  #  Properties:
-  #    LogGroupName: !Sub /aws/lambda/${getAppointment}
+
   bookAppointmentEB:
     Type: AWS::Serverless::Function
     Properties:
@@ -225,60 +258,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${bookAppointmentEB}
-  #cancelAppointment:
-  #  Type: AWS::Serverless::Function
-  #  Properties:
-  #    Description: !Sub
-  #      - Stack ${AWS::StackName} Function ${ResourceName}
-  #      - ResourceName: cancelAppointment
-  #    CodeUri: s3://dentistimo/DeleteFromEB.zip
-  #    Handler: index.handler
-  #    Runtime: nodejs12.x
-  #    MemorySize: 3008
-  #    Timeout: 30
-  #    Tracing: Active
-  #    Events:
-  #      dentistimoDELETEclinicsidappointmentsid:
-  #        Type: Api
-  #        Properties:
-  #          Path: /schedule/{clinicIdDate}
-  #          Method: PATCH
-  #          RestApiId: !Ref dentistimo
-  #    Environment:
-  #      Variables:
-  #        EVENTBUS: !Ref dentistimoEventBus
-  #    Policies:
-  #      - EventBridgePutEventsPolicy:
-  #          EventBusName: dentistimoEventBus
-  #cancelAppointmentLogGroup:
-  #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Delete
-  #  Properties:
-  #    LogGroupName: !Sub /aws/lambda/${cancelAppointment}
-  #cancelAppointmentDDB:
-  #  Type: AWS::Serverless::Function
-  #  Properties:
-  #    Description: !Sub
-  #      - Stack ${AWS::StackName} Function ${ResourceName}
-  #      - ResourceName: cancelAppointmentDDB
-  #    CodeUri: s3://dentistimo/DeleteFromDDB.zip
-  #    Handler: index.handler
-  #    Runtime: nodejs12.x
-  #    MemorySize: 3008
-  #    Timeout: 30
-  #    Tracing: Active
-  #    Environment:
-  #      Variables:
-  #        TABLE_NAME: !Ref DentistimoAppointmentsTable
-  #        TABLE_ARN: !GetAtt DentistimoAppointmentsTable.Arn
-  #    Policies:
-  #      - DynamoDBCrudPolicy:
-  #          TableName: !Ref DentistimoAppointmentsTable
-  #cancelAppointmentDDBLogGroup:
-  #  Type: AWS::Logs::LogGroup
-  #  DeletionPolicy: Delete
-  #  Properties:
-  #    LogGroupName: !Sub /aws/lambda/${cancelAppointmentDDB}
+
   bookAppointmentDDB:
     Type: AWS::Serverless::Function
     Properties:
@@ -296,54 +276,24 @@ Resources:
         Variables:
           TABLE_NAME: !Ref DentistimoAppointmentsTable
           TABLE_ARN: !GetAtt DentistimoAppointmentsTable.Arn
+          TABLE_NAME: !Ref DentistimoClinicsTable
+          TABLE_ARN: !GetAtt DentistimoClinicsTable.Arn
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref DentistimoAppointmentsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DentistimoClinicsTable
+        - SESCrudPolicy:
+            IdentityName: '*'
+            # Resource: '*'
+
+
   bookAppointmentDDBLogGroup:
     Type: AWS::Logs::LogGroup
     DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /aws/lambda/${bookAppointmentDDB}
-  eventBook:
-    Type: AWS::Events::Rule
-    Properties:
-      EventPattern:
-        source:
-          - aws.health
-      EventBusName: dentistimoEventBus
-      Targets:
-        - Id: !Ref bookAppointmentDDB
-          Arn: !GetAtt bookAppointmentDDB.Arn
-  eventBookTobookAppointmentDDBPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt bookAppointmentDDB.Arn
-      Principal: !Sub events.${AWS::URLSuffix}
-      SourceArn: !GetAtt eventBook.Arn
-  #eventCancel:
-  #  Type: AWS::Events::Rule
-  #  Properties:
-  #    EventPattern:
-  #      source:
-  #        - aws.health
-  #    EventBusName: dentistimoEventBus
-  #    Targets:
-  #      - Id: !Ref cancelAppointmentDDB
-  #        Arn: !GetAtt cancelAppointmentDDB.Arn
-  #eventCancelTocancelAppointmentDDBPermission:
-  #  Type: AWS::Lambda::Permission
-  #  Properties:
-  #    Action: lambda:InvokeFunction
-  #    FunctionName: !GetAtt cancelAppointmentDDB.Arn
-  #    Principal: !Sub events.${AWS::URLSuffix}
-  #    SourceArn: !GetAtt eventCancel.Arn
-  DeploymentStage:
-    Type: AWS::ApiGateway::Deployment
-    Properties: 
-      RestApiId: !Ref dentistimo
-      Description: Dentistimo API deployed.
-      StageName: Development
+
   DentistimoClinicsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -382,12 +332,12 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES  
       TableName: DentistimoAppointmentsTable
+  
 Metadata:
   AWS::Composer::Groups:
     Group:
       Label: Group
       Members:
-      #  - getAppointment
         - getSchedule
         - getClinics
         - getClinic
@@ -400,16 +350,12 @@ Metadata:
     Group3:
       Label: Group3
       Members:
-      #  - cancelAppointmentDDB
         - bookAppointmentDDB
     Group4:
       Label: Group4
       Members:
-        - eventBook
         - dentistimoEventBus
-      #  - eventCancel
     Group5:
       Label: Group5
       Members:
         - bookAppointment
-      #  - cancelAppointment

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-aws cloudformation delete-stack --stack-name sentismo
+aws cloudformation delete-stack --stack-name dentistimo

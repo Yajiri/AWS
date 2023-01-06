@@ -1,0 +1,213 @@
+{
+  "DentistimoClinicsTable": [
+    
+      {"PutRequest": {
+        "Item": {
+          "clinicId": {
+            "N": "1"
+          },
+          "address": {
+            "S": "Spannmålsgatan 20"
+          },
+          "city": {
+            "S": "Gothenburg"
+          },
+          "coordinate": {
+            "M": {
+              "latitude": {
+                "N": "57.707619"
+              },
+              "longitude": {
+                "N": "11.969388"
+              }
+            }
+          },
+          "dentists": {
+            "N": "3"
+          },
+          "name": {
+            "S": "Your Dentist"
+          },
+          "openinghours": {
+            "M": {
+              "friday": {
+                "S": "9:00-15:00"
+              },
+              "monday": {
+                "S": "9:00-17:00"
+              },
+              "thursday": {
+                "S": "9:00-17:00"
+              },
+              "tuesday": {
+                "S": "8:00-17:00"
+              },
+              "wednesday": {
+                "S": "7:00-16:00"
+              }
+            }
+          },
+          "owner": {
+            "S": "Dan Tist"
+          }
+        }
+      }
+    }, 
+      {"PutRequest": {
+        "Item": {
+          "clinicId": {
+            "N": "2"
+          },
+          "address": {
+            "S": "Slottskogen"
+          },
+          "city": {
+            "S": "Gothenburg"
+          },
+          "coordinate": {
+            "M": {
+              "latitude": {
+                "N": "57.685255"
+              },
+              "longitude": {
+                "N": "11.942625"
+              }
+            }
+          },
+          "dentists": {
+            "N": "1"
+          },
+          "name": {
+            "S": "Tooth Fairy Dentist"
+          },
+          "openinghours": {
+            "M": {
+              "friday": {
+                "S": "7:00-19:00"
+              },
+              "monday": {
+                "S": "7:00-19:00"
+              },
+              "thursday": {
+                "S": "7:00-19:00"
+              },
+              "tuesday": {
+                "S": "7:00-19:00"
+              },
+              "wednesday": {
+                "S": "7:00-19:00"
+              }
+            }
+          },
+          "owner": {
+            "S": "Tooth Fairy"
+          }
+        }
+      }
+    }, 
+      {"PutRequest": {
+        "Item": {
+          "clinicId": {
+            "N": "3"
+          },
+          "address": {
+            "S": "Lindholmsallén 19"
+          },
+          "city": {
+            "S": "Gothenburg"
+          },
+          "coordinate": {
+            "M": {
+              "latitude": {
+                "N": "57.709872"
+              },
+              "longitude": {
+                "N": "11.940386"
+              }
+            }
+          },
+          "dentists": {
+            "N": "2"
+          },
+          "name": {
+            "S": "The Crown"
+          },
+          "openinghours": {
+            "M": {
+              "friday": {
+                "S": "8:00-16:00"
+              },
+              "monday": {
+                "S": "6:00-15:00"
+              },
+              "thursday": {
+                "S": "7:00-17:00"
+              },
+              "tuesday": {
+                "S": "8:00-17:00"
+              },
+              "wednesday": {
+                "S": "7:00-12:00"
+              }
+            }
+          },
+          "owner": {
+            "S": "Carmen Corona"
+          }
+        }
+      }
+    }, 
+      {"PutRequest": {
+        "Item": {
+          "clinicId": {
+            "N": "4"
+          },
+          "address": {
+            "S": "Liseberg"
+          },
+          "city": {
+            "S": "Gothenburg"
+          },
+          "coordinate": {
+            "M": {
+              "latitude": {
+                "N": "57.694723"
+              },
+              "longitude": {
+                "N": "11.991153"
+              }
+            }
+          },
+          "dentists": {
+            "N": "3"
+          },
+          "name": {
+            "S": "Lisebergs Dentists"
+          },
+          "openinghours": {
+            "M": {
+              "friday": {
+                "S": "10:00-18:00"
+              },
+              "monday": {
+                "S": "10:00-18:00"
+              },
+              "thursday": {
+                "S": "10:00-18:00"
+              },
+              "tuesday": {
+                "S": "10:00-18:00"
+              },
+              "wednesday": {
+                "S": "10:00-18:00"
+              }
+            }
+          },
+          "owner": {
+            "S": "Glen Hysén"
+          }
+        }
+      }
+    }
+  ]
+}
