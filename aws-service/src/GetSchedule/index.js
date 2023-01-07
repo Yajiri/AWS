@@ -57,7 +57,12 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 200,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                }
             };
                 
         } else if(JSON.stringify(responseBooking)===null) {
@@ -78,7 +83,12 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 404,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                }
             };
             
     
@@ -120,7 +130,12 @@ exports.handler = async(event, context, callback) => {
         statusCode : 404,
         body: JSON.stringify(result),
         isBase64Encoded : false,
-        headers:{"content-type" : "application/json"}
+        headers:{
+            "content-type" : "application/json",
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        }
     };
     
     }
