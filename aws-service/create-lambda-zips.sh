@@ -6,14 +6,16 @@ then
 fi 
 mkdir build
 cd build
-zip DeleteFromDDB.zip ../src/DeleteFromDDB/index.js
-zip DeleteFromEB.zip ../src/DeleteFromEB/index.js
-zip ReadFromDDB.zip ../src/ReadFromDDB/index.js
-zip WriteToDDB.zip ../src/WriteToDDB/index.js
-zip WriteToEB.zip ../src/WriteToEB/index.js
 
-aws s3 cp DeleteFromDDB.zip s3://dentistimo
-aws s3 cp DeleteFromEB.zip s3://dentistimo
-aws s3 cp ReadFromDDB.zip s3://dentistimo
-aws s3 cp WriteToDDB.zip s3://dentistimo
-aws s3 cp WriteToEB.zip s3://dentistimo
+zip bookAppointmentDDB.zip ../src/bookAppointmentDDB/index.js
+zip bookAppointmentEB.zip ../src/bookAppointmentEB/index.js
+zip getClinics.zip ../src/getClinics/index.js
+zip getClinic.zip ../src/getClinic/index.js
+zip getSchedule.zip ..src/getSchedule.index.js
+
+
+aws s3 cp bookAppointmentDDB.zip s3://dentistimo
+aws s3 cp bookAppointmentEB.zip s3://dentistimo
+aws s3 cp getClinic.zip s3://dentistimo
+aws s3 cp getClinics.zip s3://dentistimo
+aws s3 cp getSchedule.zip s3://dentistimo

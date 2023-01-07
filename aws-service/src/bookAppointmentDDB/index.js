@@ -1,7 +1,7 @@
 'use strict';  
 const AWS = require('aws-sdk'); 
-const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});
-var ses = new AWS.SES({ region: "eu-central-1" });
+const documentClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+var ses = new AWS.SES({ region: "us-east-1" });
 var log = true;
 
 function clog (message){
@@ -12,16 +12,19 @@ function clog (message){
 
 exports.handler = function(event, context, callback) { 
     let detail = event.detail;
+
     let queryRecord = {         
         TableName : "DentistimoAppointmentsTable",         
         Key: {             
-            "clinicId": detail.clinicId,             
+            "clinicId": parseInt(detail.clinicId),             
             "date": detail.date,                    
         } 
     };
     
-    clog(detail);
+    clog("detail: "+ JSON.stringify(detail));
     
+    try {
+
     documentClient.get(queryRecord, async function(err, data){        
         
         let selectedClinic = await getClinicData(detail);
@@ -48,8 +51,7 @@ exports.handler = function(event, context, callback) {
               detail.timeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
               newRecord = createNewBooking(detail, clinicHours); // Adds new record if clinic and date do not exist
               
-
-              newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
+                 newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
               
               clog("new record with parsed and payload: " + JSON.stringify(newRecord));
 
@@ -66,15 +68,19 @@ exports.handler = function(event, context, callback) {
           }
 
           await writeBooking(newRecord); // Write the record to the database
-    
-          callback(null, data);
+        try {
+             callback(null, data);
+        } catch (e) {clog(e)}
         } else {
             // why is data null or undefined? this is a system error, throw
             // the circuit breaker
-            denialMail(detail);
-            callback(err, null);
-        }
+            const sysError = "as we are experiencing a system error.";
+            denialMail(detail, sysError);
+            
+                callback(err, null);
+        } 
     }); 
+    } catch (e) {clog(e)}
 };
 
 const getClinicData  = async function(event) { // Helper function to retrieve clinic data 
@@ -82,7 +88,7 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
     let params = {         
         TableName : "DentistimoClinicsTable",         
         Key: {             
-            "clinicId": event.clinicId
+            "clinicId": parseInt(event.clinicId)
         } 
     };  
     const myResolve = (myParam) => {
@@ -107,7 +113,7 @@ const getClinicData  = async function(event) { // Helper function to retrieve cl
 
 const createNewBooking = function(event, clinicHours) { // Creates a new record with the passed payload
     let newRecord = {                 
-      "clinicId": event.clinicId,
+      "clinicId": parseInt(event.clinicId),
       "date": event.date,
       "timeSlots": clinicHours
     };  
@@ -149,17 +155,17 @@ const writeBooking = async function(record) { // Helper function that writes a n
 const parseOpeningHours = function(openingHours, date) {
     let openingHoursForDay;
     
-    clog("date for ella: " + typeof date);
+    // clog("date for ella: " + typeof date);
 
-    clog("OP " + JSON.stringify(openingHours));
+    // clog("OP " + JSON.stringify(openingHours));
     
-    const y = date.slice(0,4);
-    const m = date.slice(4,6);
-    const d = date.slice(6,8);
+    // const y = date.slice(0,4);
+    // const m = date.slice(4,6);
+    // const d = date.slice(6,8);
     
-    const ymd = y + "-" + m + "-" + d;
+    // const ymd = y + "-" + m + "-" + d;
     
-    const parsedDate = new Date(ymd);
+    const parsedDate = new Date(date);
     const weekday = parsedDate.getDay();
     clog("weekDay" + weekday);
     
@@ -251,7 +257,8 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
         
         if ( (! found || typeof found === "undefined" ) ) { // this timeslot is not available
             // send a mail saying the requested date is not available for booking (failed)
-            denialMail(event);
+            const doesNotExist = "as appointments for the selected time does not exist.";
+            denialMail(event, doesNotExist);
             clog("didn't find the record");
 
         } else {  // the timeslot is available, see if it is available        
@@ -263,19 +270,26 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                 " input: " + JSON.stringify(inputTime));
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
-                allBookings.splice(allBookings, 0, email); // add email to email array
-                found.bookings = allBookings;
-                clog("after splice, record:" + JSON.stringify(found) );
+                if (allBookings.includes(email)) {
+                    const alreadyExists = "due to a previously confirmed appointment you have made for this date and time.";
+                    clog(alreadyExists);
+                    denialMail(event, alreadyExists); // denial mail
+                    clog("Error: you have already booked an appointment for this time.");
+                } else {
+                    allBookings.splice(allBookings, 0, email); // add email to email array
+                    found.bookings = allBookings;
+                    clog("after splice, record:" + JSON.stringify(found) );
 
-                let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
-                record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record  
-                acceptanceMail(event);
-                clog(
-                    "index in time slot: " + JSON.stringify(foundIndex) +
-                    "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
-
+                    let foundIndex = record.timeSlots.indexOf(found); // Retrieves index of element we are looking for within the array
+                    record.timeSlots[foundIndex] = found; // Updates value stored in array for updated newBookings val in entire record  
+                    acceptanceMail(event); // send acceptance confirmation email to end user
+                    clog(
+                        "index in time slot: " + JSON.stringify(foundIndex) +
+                        "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
+                }
             } else { // When a time is fully booked, return error email
-                denialMail(event);
+                const fullyBooked = "as we are fully booked for this date and time.";
+                denialMail(event, fullyBooked);
                 clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
             }
             clog("all bookings:" + JSON.stringify(allBookings));
@@ -283,8 +297,6 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
     }
     return record;
 };
-
-
 const acceptanceMail = async function (event) {
   var params = {
     Destination: {
@@ -292,29 +304,29 @@ const acceptanceMail = async function (event) {
     },
     Message: {
       Body: {
-        Text: { Data: "Your booking was successful for " + event.date + 
-            " at " + event.time + "!" },
+        Text: { Data: "Welcome! Your booking request was successful for " + event.date + 
+            " at " + event.time + ". Thank you for choosing Dentistimo!" },
       },
       Subject: { Data: "Successful booking" },
     },
-    Source: "jensp6@hotmail.com",
+    Source: "dentistimogoteborg@gmail.com",
   };
   return ses.sendEmail(params).promise();
 };
 
-const denialMail = async function (event) {
+const denialMail = async function (event, message) {
   var params = {
     Destination: {
       ToAddresses: [event.email],
     },
     Message: {
       Body: {
-        Text: { Data: "Your booking was unsuccessful for " + event.date + 
-            " at " + event.time + ". Please try again."},
+        Text: { Data: "Hello! We regret to inform you that your booking request for " + event.date + 
+            " at " + event.time + " cannot be completed, " + message + " Please try again."},
       },
-      Subject: { Data: "Unsuccessful booking" },
+      Subject: { Data: "Unsuccessful booking request" },
     },
-    Source: "jensp6@hotmail.com",
+    Source: "dentistimogoteborg@gmail.com",
   };
   return ses.sendEmail(params).promise();
 };
