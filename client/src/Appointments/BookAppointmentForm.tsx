@@ -1,4 +1,5 @@
 import React from "react";
+import { Link} from "react-router-dom";
 import { appointmentApi } from "../services/appointment";
 
 import AppointmentType from "../Types/AppointmentType";
@@ -9,29 +10,47 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import * as EmailValidator from 'email-validator';
-import "bootstrap/dist/css/bootstrap.min.css"
-
-// const validator = require('validator');
+import "bootstrap/dist/css/bootstrap.min.css";
 
 class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
         super(props);
         this.state = {
-            timeSlots : props.data.timeSlots,
+            navigation: props.data.navigation,
+            bookingData:props.data,
+            timeSlots:[],
             clinicId: props.data.clinicId,
-            date: props.data.date,
+            date: '',
+            seletedTime: '',
             time: '',
             email: '',
-            clinicIDDate: props.data.clinicIDDate,
-            dentists: props.data.dentists,
             loading: false,
             inputIsValid: false,
-            response : '',
+            response : ''
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
         this.checkInputNotNull = this.checkInputNotNull.bind(this);
+    }
+
+    componentDidMount(): void {
+        console.log(this.state.bookingData)
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
+        const id = this.state.bookingData.clinicId
+        async function getTimeSlots(date:string) {
+            const data = await appointmentApi.getAppointments(id,dateString); 
+            
+            return data;
+        }
+
+        getTimeSlots(dateString).then(resp => {
+            console.log(resp.data.timeSlots);
+            this.setState({timeSlots: resp.data.timeSlots});  
+          }).catch(err => {
+            console.log(err)
+            console.log( this.props.navigation)
+        })
     }
 
     handleChange(event:any) {
@@ -53,89 +72,78 @@ class BookAppointmentForm extends React.Component<any,any> {
         console.log(event);
         console.log(this.checkInputNotNull());
         this.setState({loading:true});
-        this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
-
+        
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
         const data: AppointmentType = {
-            clinicId: this.state.clinicId,
-            date: this.state.date,
+            clinicId: this.state.bookingData.clinicId,
+            date: dateString,
             time: this.state.selectedTime,
             email:  this.state.email,
         }
 
         appointmentApi.makeAppointment(data)
             .then((response: any) => {
+                this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
                 console.log(response);
             })
             .catch((err: Error) => {
+                this.setState({response:'We could not process your request! Please try again later!'});
                 console.log(err);
                 
             })
     }
 
     validateEmail(){
-        // const errors = {};
-        // const regEx=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        // if (regEx.test(email)){
-        //   console.log('Invalid email address')
-        // }
         console.log("test: " + this.state.email)
-        // return(validator.isEmail(this.state.email))  
         return EmailValidator.validate(this.state.email)
-     }
+    }
 
-     checkAvailabitily(timeSlots:any){
+    checkAvailabitily(timeSlots:any){
         let isAvailable=false;
         for(const element of timeSlots){
             if(element.available===true){
                 isAvailable=true;
-                console.log(element)
             }
-
         }
         return isAvailable;
-     }
+    }
 
-     checkInputNotNull(){
+    checkInputNotNull(){
         return(this.state.selectedTime!== "" && this.validateEmail())
-     }
+    }
 
     render(){
-    return(
-    
-    <div className="card card-container">
-        <form>
-            <div className="form-group">
-                <Container>
-                    <Col>
-                    
-                        <Row>
-                            { this.checkAvailabitily(this.state.timeSlots) ? (
-                                <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
-                                    if(slot.available)
-                                        return <Col>
-                                                    <Row>
-                                                        <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="success" disabled>{slot.time}</Button>
-                                                    </Row>
-                                                </Col>
-                                        return <Col>
-                                                    <Row>
-                                                        <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="secondary" disabled>{slot.time}</Button>
-                                                    </Row>
-                                                </Col>
-                                }
+        return(    
+            <div className="card card-container">
+                <form>
+                    <div className="form-group">
+                        <Container>
+                            <Col>
+                                <Row>
+                                    { this.checkAvailabitily(this.state.timeSlots) ? (
+                                        <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
+                                            if(slot.available)
+                                                return <Col>
+                                                            <Row>
+                                                                <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="success" disabled>{slot.time}</Button>
+                                                            </Row>
+                                                        </Col>
+                                                return <Col>
+                                                            <Row>
+                                                                <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="secondary" disabled>{slot.time}</Button>
+                                                            </Row>
+                                                        </Col>
+                                            }
 
-                                )}
-                            </>
+                                        )}
+                                        </>
 
                             ) : (
                                 <><div className="alert alert-secondary" role="alert">Unfortunately, there are no availabitilies for this date. Please select another day.</div>
                                 </>
                             )
-                                
-
                             }
                                 
-                            
                         </Row>
                     </Col>
                 </Container>
@@ -182,10 +190,11 @@ class BookAppointmentForm extends React.Component<any,any> {
 
             )}
             
-
-            <button className="btn btn-outline-info" >                 
-                <span>Return to date&clinic selection</span>
-            </button>
+            <Link to='/'>                
+                <button className="btn btn-outline-info" >                 
+                    <span>Return to date and clinic selection</span>
+                </button>
+            </Link>
 
             {this.state.response && (
             <div className="form-group">

@@ -1,1 +1,0 @@
-aws ses create-template --cli-input-json file://./src/SESMailTemplate.json

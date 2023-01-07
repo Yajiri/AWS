@@ -18,6 +18,8 @@
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.3",
+    "aws4-axios": "^2.4.9",
+    "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "dayjs": "^1.11.7",
     "email-validator": "^2.0.4",
@@ -45,18 +47,11 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "devDependencies": {
     "@types/googlemaps": "^3.43.3",
     "@types/styled-components": "^5.1.26"

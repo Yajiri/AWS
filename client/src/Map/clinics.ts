@@ -1,6 +1,8 @@
-const Clinics = [
+const Clinics = 
+{
+  "Clinics": [
   {
-    "id": 1,
+    "clinicId": 1,
     "name": "Your Dentist",
     "owner": "Dan Tist",
     "dentists": 3,
@@ -19,7 +21,7 @@ const Clinics = [
     }
   },
   {
-    "id": 2,
+    "clinicId": 2,
     "name": "Tooth Fairy Dentist",
     "owner": "Tooth Fairy",
     "dentists": 1,
@@ -38,7 +40,7 @@ const Clinics = [
     }
   },
   {
-    "id": 3,
+    "clinicId": 3,
     "name": "The Crown",
     "owner": "Carmen Corona",
     "dentists": 2,
@@ -57,7 +59,7 @@ const Clinics = [
     }
   },
   {
-    "id": 4,
+    "clinicId": 4,
     "name": "Lisebergs Dentists",
     "owner": "Glen Hysén",
     "dentists": 3,
@@ -75,5 +77,5 @@ const Clinics = [
       "friday": "10:00-18:00"
     }
   }
-]
+]}
 export default Clinics

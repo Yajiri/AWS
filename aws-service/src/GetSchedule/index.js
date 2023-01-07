@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 const AWS = require('aws-sdk');
 
 //AWS.config.Update({ region: "eu-central-1"});
 
 exports.handler = async(event, context, callback) => {
     const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
-    let result = {}, timeSlots;
-    let timeSlotsAvailability = {};
+    let result = {};
+    let timeSlots;
 
 //
     //  return {
@@ -29,7 +29,7 @@ exports.handler = async(event, context, callback) => {
 
         const responseBooking = await getSchedule(event.pathParameters.clinicId, event.pathParameters.date);
         
-        console.log("responseB " + responseBooking.Item + " " + JSON.stringify(responseBooking))
+        console.log("responseB " + responseBooking.Item + " " + JSON.stringify(responseBooking));
         
         // if(responseBooking === null) {
         //     //todo
@@ -38,8 +38,8 @@ exports.handler = async(event, context, callback) => {
         if(JSON.stringify(responseBooking)=="{}" ) {
            
              
-            const openingHours = responseClinic.Item.openinghours
-            console.log("test" + openingHours)
+            const openingHours = responseClinic.Item.openinghours;
+            console.log("test" + openingHours);
             
             // parse opening hours for the day from clinic record to create a new
             // availability array
@@ -57,12 +57,17 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 200,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                }
             };
                 
         } else if(JSON.stringify(responseBooking)===null) {
             // this is an error case...throw the circuit breaker here
-            console.log("get booking response is null")
+            console.log("get booking response is null");
             
             // if no clinic exists then return a bad record to the client
             // client will check for clinicId 0, and show error if it sees it
@@ -78,13 +83,18 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 404,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                }
             };
             
     
         } else {
             
-            const slots = responseBooking.Item.timeSlots.L
+            const slots = responseBooking.Item.timeSlots.L;
             const dentists = responseClinic.Item.dentists.N;
             
             // parse the existing schedule
@@ -102,19 +112,30 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 200,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                    
+                }
             };
         }
         
     } else {
-        result = ["Invalid Clinic "]
+        result = ["Invalid Clinic "];
     // }
     
     return {
         statusCode : 404,
         body: JSON.stringify(result),
         isBase64Encoded : false,
-        headers:{"content-type" : "application/json"}
+        headers:{
+            "content-type" : "application/json",
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        }
     };
     
     }
@@ -127,14 +148,14 @@ exports.handler = async(event, context, callback) => {
                 },
             }
                 
-            }
+            };
         return await ddb.getItem(paramsClinic).promise();
         //return {"city":{"S":"Gothenburg"},"coordinate":{"M":{"longitude":{"N":"11.940386"},"latitude":{"N":"57.709872"}}},"dentists":{"N":"2"},"owner":{"S":"Carmen Corona"},"address":{"S":"Lindholmsallén 19"},"openinghours":{"M":{"wednesday":{"S":"7:00-12:00"},"thursday":{"S":"7:00-17:00"},"friday":{"S":"8:00-16:00"},"tuesday":{"S":"8:00-17:00"},"monday":{"S":"6:00-15:00"}}},"id":{"N":"3"},"name":{"S":"The Crown"}}
  
     }
     
     async function getSchedule(clinicId, date) {
-        console.log(clinicId + " " + date)
+        console.log(clinicId + " " + date);
         const paramsBooking = {
             TableName : "DentistimoAppointmentsTable",         
             Key: {             
@@ -153,17 +174,17 @@ exports.handler = async(event, context, callback) => {
     function parseOpeningHours(openingHours, date) {
         let openingHoursForDay;
 
-        console.log("OP " + JSON.stringify(openingHours));
+        // console.log("OP " + JSON.stringify(openingHours));
         
-        const y = date.slice(0,4)
-        const m = date.slice(4,6)
-        const d = date.slice(6,8)
+        // const y = date.slice(0,4)
+        // const m = date.slice(4,6)
+        // const d = date.slice(6,8)
         
-        const ymd = y + "-" + m + "-" + d
+        // const ymd = y + "-" + m + "-" + d
         
-        const parsedDate = new Date(ymd)
-        const weekday = parsedDate.getDay()
-        console.log("weekDay" + weekday)
+        const parsedDate = new Date(date);
+        const weekday = parsedDate.getDay();
+        console.log("weekDay" + weekday);
         
         switch (weekday) {
             case 0:
@@ -201,20 +222,24 @@ exports.handler = async(event, context, callback) => {
             openingHoursForDay = openingHoursForDay.S;
         }
             
-        console.log("check", openingHoursForDay)
+        console.log("check", openingHoursForDay);
         
-        let hours = openingHoursForDay.split(":")
-        let startH = parseFloat(hours[0])
-        console.log(startH)
-        hours = openingHoursForDay.split("-")
-        const endH = parseFloat(hours[1].split(":")[0])
-       
-        let i = 0
-        let newTimeSlots=[]
-        let t = ""
+        let hours = openingHoursForDay.split(":");
+        let startH = parseFloat(hours[0]);
+        
+        
+        hours = openingHoursForDay.split("-");
+        const endH = parseFloat(hours[1].split(":")[0]);
+        console.log("start hour", startH, "end hour", endH);
+        
+        let i = 0;
+        let newTimeSlots=[];
+        let t = "";
         
         while(startH <= endH - 0.5) {
-            t = parseInt(startH);
+            console.log("start of loop", startH, endH);
+            t = parseInt(startH, 10);
+        
             if(startH % 1 === 0.5) {
                 t += ":30";    
             } else {
@@ -227,7 +252,9 @@ exports.handler = async(event, context, callback) => {
             }
     
             startH += 0.5;
+            console.log("end of while", startH, endH);
         }
+        console.log("out of while");
         return newTimeSlots;
         
     }
@@ -237,18 +264,18 @@ exports.handler = async(event, context, callback) => {
         let i = 0;
         console.log("dentists" + dentists);
         input.forEach(slot => {
-            const bookings = slot.M.bookings.L
+            const bookings = slot.M.bookings.L;
 
             if(bookings.length < dentists){
-                slots[i] = {"time":slot.M.time.S, "available":true}
-                i++
+                slots[i] = {"time":slot.M.time.S, "available":true};
+                i++;
             } else {
-                console.log(slot.M.time.S)
-                slots[i] = {"time":slot.M.time.S, "available":false}
-                i++
+                console.log(slot.M.time.S);
+                slots[i] = {"time":slot.M.time.S, "available":false};
+                i++;
             }
-        })
-        return slots
+        });
+        return slots;
     }
     
-}
+};

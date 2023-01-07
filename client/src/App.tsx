@@ -4,6 +4,8 @@ import { Wrapper, Status } from "@googlemaps/react-wrapper";
 
 import Home from './Home/Home'
 import BookAppointment from './Appointments/BookAppointment'
+import Unavailable from './Unavaiable';
+import NotFound from './NotFound';
 
 const render = (status: Status): ReactElement => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
@@ -22,7 +24,9 @@ function App() {
           </Wrapper>
           } 
         />
-        <Route path='/appointments' element={<BookAppointment />} />
+        <Route path={`/clinics/:clinicId/appointments/:date`} element={<BookAppointment />} />
+        <Route path={`/unavailable`} element={<Unavailable />} />
+        <Route path='*' element={<NotFound/>} />
       </Routes>
       </Router>
       
