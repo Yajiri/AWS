@@ -83,11 +83,11 @@ class BookAppointmentForm extends React.Component<any,any> {
 
         appointmentApi.makeAppointment(data)
             .then((response: any) => {
-                this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'});
+                this.setState({response:'Thank you for choosing Dentistimo! We are now processing your request, please check your email to find the status of your booking request.'});
                 console.log(response);
             })
             .catch((err: Error) => {
-                this.setState({response:'We could not process your request! Please try again later!'});
+                this.setState({response:'We could not process your request. Please try again later!'});
                 console.log(err);
                 
             })
