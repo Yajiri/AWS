@@ -10,8 +10,7 @@ exports.handler = async (event, context, callback) => {
       ProjectionExpression: "#name, #owner, clinicId , address, city, dentists, coordinate, openinghours",
       ExpressionAttributeNames: {'#name': 'name', '#owner': 'owner'}
 };
-
-
+try {
 const Clinics = await ddb.scan(params).promise() ;
 let convertedBody = [];
 for (let index=0; index<Clinics.Items.length; index++)
@@ -44,8 +43,6 @@ var response = {
 //     //isBase64Encoded : false,
 //     //headers : {"content-type" : "application/json"}
 // };
-try {
     callback (null, response);
-} catch (e) {}
-
+} catch (e) {console.log(e)}
 };

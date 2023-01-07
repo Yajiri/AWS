@@ -23,6 +23,8 @@ exports.handler = function(event, context, callback) {
     
     clog("detail: "+ JSON.stringify(detail));
     
+    try {
+
     documentClient.get(queryRecord, async function(err, data){        
         
         let selectedClinic = await getClinicData(detail);
@@ -49,9 +51,7 @@ exports.handler = function(event, context, callback) {
               detail.timeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
               newRecord = createNewBooking(detail, clinicHours); // Adds new record if clinic and date do not exist
               
-            try {
                  newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
-            } catch (e) {clog(e)}
               
               clog("new record with parsed and payload: " + JSON.stringify(newRecord));
 
@@ -76,11 +76,11 @@ exports.handler = function(event, context, callback) {
             // the circuit breaker
             const sysError = "as we are experiencing a system error.";
             denialMail(detail, sysError);
-            try {
+            
                 callback(err, null);
-            } catch (e) {clog(e)}
-        }
+        } 
     }); 
+    } catch (e) {clog(e)}
 };
 
 const getClinicData  = async function(event) { // Helper function to retrieve clinic data 

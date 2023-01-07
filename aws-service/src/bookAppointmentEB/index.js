@@ -33,6 +33,7 @@ exports.handler = async (event, context, callback) => {
     //   }
     // ]
     // };
+    try {
     const response = {
     statusCode: 200,
     isBase64Encoded : false,
@@ -44,7 +45,6 @@ exports.handler = async (event, context, callback) => {
   const result = await eventBridge.putEvents(params).promise();
   console.log(result);
   //todo: handle error 
-  try {
     return response;
-  } catch (e) {console.log(e)}
+    } catch (e) {console.log(e)}
 };
