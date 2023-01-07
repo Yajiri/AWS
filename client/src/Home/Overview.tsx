@@ -1,4 +1,7 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, useRef } from 'react'
+import { useNavigate } from "react-router-dom";
+import ClinicType from '../Types/ClinicType';
+
 import styled from 'styled-components';
 
 const Content1 = styled.div`
@@ -26,47 +29,77 @@ city: string
 
 
 const Home = () => {
-  const [data, setClinic] = useState([]);
-  const [selectedDate, setDate] = useState();
+  const ref = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [opened, setIsOpened] = useState<boolean>(false);
+  // const [data, setData] = useState([]);
+  const [clinic, setClinic] = useState<ClinicType>();
+  const [date, setDate] = useState("0000-00-00");
+
+
+  const handleOnOpen = () => setIsOpened(true);
+  const handleOnClose = () => setIsOpened(false);
+
+
+  // useEffect listener should be equal to clinic and date
+
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('clinic') || '{}');
-    if (data) {
-      setClinic(data);
+    const selectedClinic = JSON.parse(localStorage.getItem('clinic') || '{}');
+    if (selectedClinic) {
+      if (selectedClinic){
+      setClinic(selectedClinic);}
     }
-  }, [data])
+  }, [clinic]);
 
   useEffect(() => {
     const selectedDate = JSON.parse(localStorage.getItem('date') || '{}');
     if (selectedDate) {
       setDate(selectedDate);
     }
-  }, [selectedDate])
+  }, [clinic]);
 
+  
   let handleClick = false;
-
-  if (data[1] > 0) {
-    //console.log("I am clickable");
+  if ( date && clinic?.clinicId ) {
     handleClick = false;
   } else {
-   //console.log("I am not clickable");
     handleClick = true;
   }
 
-  /* If there is no selected clinic or no selected date, the button should be disabled
-  ** if (!data || !selectedDate)
-  **/
+  let navigate = useNavigate(); 
+  const routeChange = () =>{ 
+    let path = `/clinics/${clinic?.clinicId}/appointments/${date}`; 
+    navigate(path);
+  }
 
-
-  return(
-    <Content1>
+  return(<div ref={containerRef}>
+    {clinic?.clinicId && date ?
+      <Content1>
         <h3>Clinic Information</h3>
-        <h4>Clinic: {data[0]}</h4>
-        <h4>Address: {data[2]}, {data[3]}</h4>
-        <h4>Dentists: {data[1]}</h4>        
-        <h4>Opening hours:</h4>
-        <Button disabled={handleClick}>Search Times</Button>
-    </Content1>
+
+        <h4>{`Clinic: ${clinic?.name}`}</h4>
+        <h4>{`Address: ${clinic?.address}, ${clinic?.city}`}</h4>
+
+        <h4>{`Opening hours:`}</h4>
+        <h5>{`\nMonday: ${clinic?.openinghours?.monday}`}</h5>
+        <h5>{`\nTuesday: ${clinic?.openinghours?.tuesday}`}</h5>
+        <h5>{`\nWednesday: ${clinic?.openinghours?.wednesday}`}</h5>
+        <h5>{`\nThursday: ${clinic?.openinghours?.thursday}`}</h5>
+        <h5>{`\nFriday: ${clinic?.openinghours?.friday}`}</h5>
+        
+       <Button 
+        disabled={handleClick} 
+        onClick={routeChange}
+       >
+         Search Times
+        </Button>
+      </Content1>
+     : 
+     <div></div>
+    }
+    </div>
   );
 }
 

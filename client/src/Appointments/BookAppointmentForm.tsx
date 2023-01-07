@@ -1,31 +1,58 @@
 import React from "react";
+import { Link} from "react-router-dom";
+import { appointmentApi } from "../services/appointment";
+
+import AppointmentType from "../Types/AppointmentType";
+
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import * as EmailValidator from 'email-validator';
-import "bootstrap/dist/css/bootstrap.min.css"
-
-// const validator = require('validator');
+import "bootstrap/dist/css/bootstrap.min.css";
 
 class BookAppointmentForm extends React.Component<any,any> {
     constructor(props:any){
         super(props);
         this.state = {
-            timeSlots : props.data.timeSlots,
+            navigation: props.data.navigation,
+            bookingData:props.data,
+            timeSlots:[],
+            clinicId: props.data.clinicId,
+            date: '',
             seletedTime: '',
+            time: '',
             email: '',
-            clinicIDDate: props.data.clinicIDDate,
-            dentists: props.data.dentists,
             loading: false,
             inputIsValid: false,
-            response : '',
+            response : ''
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.validateEmail = this.validateEmail.bind(this);
         this.checkInputNotNull = this.checkInputNotNull.bind(this);
+    }
+
+    componentDidMount(): void {
+        console.log(this.state.bookingData)
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
+        const id = this.state.bookingData.clinicId
+        async function getTimeSlots(date:string) {
+            const data = await appointmentApi.getAppointments(id, dateString); 
+            
+            return data;
+        }
+
+        getTimeSlots(dateString).then(resp => {
+            console.log(resp.data.timeSlots);
+            this.setState({timeSlots: resp.data.timeSlots});  
+            this.setState({selectedTime:resp.data.timeSlots[0].time})
+            console.log(this.state.selectedTime)
+          }).catch(err => {
+            console.log(err)
+            console.log( this.props.navigation)
+        })
     }
 
     handleChange(event:any) {
@@ -45,52 +72,55 @@ class BookAppointmentForm extends React.Component<any,any> {
     handleSubmit(event:any) {
         event.preventDefault();
         console.log(event);
-        console.log(this.checkInputNotNull())
+        console.log(this.checkInputNotNull());
         this.setState({loading:true});
-        this.setState({response:'Thank you for your request! Please check your email to find your booking confirmation!'})
-        console.log (this.state.seletedTime + " " + this.state.email + " " + this.state.clinicIDDate +" ")
-        // await axios.post(
-        //   '',
-        //   { timeSlot: `${timeSlot}`, email: `${email}`, clinicIDDate: `${bookingID}`, clinic: `${clinic}`, date: `${date}` }
-        // );
+        
+        const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
+        const data: AppointmentType = {
+            clinicId: this.state.bookingData.clinicId,
+            date: dateString,
+            time: this.state.selectedTime,
+            email:  this.state.email,
+        }
+
+        appointmentApi.makeAppointment(data)
+            .then((response: any) => {
+                this.setState({response:'Thank you for choosing Dentistimo! We are now processing your request, please check your email to find the status of your booking request.'});
+                console.log(response);
+            })
+            .catch((err: Error) => {
+                this.setState({response:'We could not process your request. Please try again later!'});
+                console.log(err);
+                
+            })
     }
 
     validateEmail(){
-        // const errors = {};
-        // const regEx=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        // if (regEx.test(email)){
-        //   console.log('Invalid email address')
-        // }
         console.log("test: " + this.state.email)
-        // return(validator.isEmail(this.state.email))  
         return EmailValidator.validate(this.state.email)
-     }
+    }
 
-     checkAvailabitily(timeSlots:any){
+    checkAvailabitily(timeSlots:any){
         let isAvailable=false;
         for(const element of timeSlots){
             if(element.available===true){
                 isAvailable=true;
-                console.log(element)
             }
-
         }
         return isAvailable;
-     }
+    }
 
-     checkInputNotNull(){
-        return(this.state.seletedTime!== "" && this.validateEmail())
-     }
+    checkInputNotNull(){
+        return(this.state.selectedTime!== "" && this.validateEmail())
+    }
 
-      render(){
-        return(
-            
+    render(){
+        return(    
             <div className="card card-container">
                 <form>
                     <div className="form-group">
                         <Container>
                             <Col>
-                            
                                 <Row>
                                     { this.checkAvailabitily(this.state.timeSlots) ? (
                                         <>{this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
@@ -105,82 +135,79 @@ class BookAppointmentForm extends React.Component<any,any> {
                                                                 <Button style={{margin:"1px"}}className="timeSlot" id={slot.time} variant="secondary" disabled>{slot.time}</Button>
                                                             </Row>
                                                         </Col>
-                                        }
-    
+                                            }
+
                                         )}
-                                    </>
-
-                                    ) : (
-                                        <><div className="alert alert-secondary" role="alert">Unfortunately, there are no availabitilies for this date. Please select another day.</div>
                                         </>
-                                    )
-                                        
 
-                                    }
-                                        
-                                    
-                                </Row>
-                            </Col>
-                        </Container>
-                    </div>
-                
-                    {this.checkAvailabitily(this.state.timeSlots) && (
-                        <>
-                            <div className="form-group">
-                            <label htmlFor="seletedTime">Select a slot*</label>
-                            <Form.Select name="seletedTime" onChange={this.handleChange}>
-                                {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
-                                    if(slot.available){
-                                        return <option value={slot.time}>{slot.time}</option>
-                                    }
-                                    }
-                                )}
-                            </Form.Select>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="email">Email*</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="email"
-                                    value={this.state.email}
-                                    onChange={this.handleChange}
-                                    required
-                                />
+                            ) : (
+                                <><div className="alert alert-secondary" role="alert">Unfortunately, there are no availabitilies for this date. Please select another day.</div>
+                                </>
+                            )
+                            }
                                 
-                        </div>
-
-                      
-                        <div className="form-group">
-                        <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.state.inputIsValid}> 
-                        
-                            {this.state.loading && (
-                            <span className="spinner-border spinner-border-sm"></span>
-                            )}
-                            <span>Make Appointment</span>
-                        </button>
-                        </div>
-                    </>
-
-                    )}
-                    
-
-                    <button className="btn btn-outline-info" >                 
-                        <span>Return to date&clinic selection</span>
-                    </button>
-
-                    {this.state.response && (
-                    <div className="form-group">
-                        <div className="alert alert-success" role="alert">
-                        {this.state.response}
-                        </div>
-                    </div>
-                    )}
-                </form>
+                        </Row>
+                    </Col>
+                </Container>
             </div>
-        )
-      }
+        
+            {this.checkAvailabitily(this.state.timeSlots) && (
+                <>
+                    <div className="form-group">
+                    <label htmlFor="selectedTime">Select a time*</label>
+                    <Form.Select name="selectedTime" onChange={this.handleChange}>
+                        {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
+                            if(slot.available){
+                                return <option value={slot.time}>{slot.time}</option>
+                            }
+                            }
+                        )}
+                    </Form.Select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="email">Email*</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                            required
+                        />
+                        
+                </div>
+
+                
+                <div className="form-group">
+                <button className="btn btn-primary btn-block" onClick={this.handleSubmit} disabled={!this.state.inputIsValid}> 
+                
+                    {this.state.loading && (
+                    <span className="spinner-border spinner-border-sm"></span>
+                    )}
+                    <span>Make Appointment</span>
+                </button>
+                </div>
+            </>
+
+            )}
+            
+            <Link to='/'>                
+                <button className="btn btn-outline-info" >                 
+                    <span>Return to date and clinic selection</span>
+                </button>
+            </Link>
+
+            {this.state.response && (
+            <div className="form-group">
+                <div className="alert alert-success" role="alert">
+                {this.state.response}
+                </div>
+            </div>
+            )}
+        </form>
+    </div>
+    )}
 
 }
 
