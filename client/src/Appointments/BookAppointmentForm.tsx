@@ -47,6 +47,8 @@ class BookAppointmentForm extends React.Component<any,any> {
         getTimeSlots(dateString).then(resp => {
             console.log(resp.data.timeSlots);
             this.setState({timeSlots: resp.data.timeSlots});  
+            this.setState({selectedTime:resp.data.timeSlots[0].time})
+            console.log(this.state.selectedTime)
           }).catch(err => {
             console.log(err)
             console.log( this.props.navigation)
