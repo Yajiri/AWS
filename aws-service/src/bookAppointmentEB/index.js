@@ -37,7 +37,13 @@ exports.handler = async (event, context, callback) => {
     const response = {
     statusCode: 200,
     isBase64Encoded : false,
-    headers : {"content-type" : "application/json"},
+    headers : {
+      "content-type" : "application/json",
+      "Access-Control-Allow-Headers" : "Content-Type",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+      
+    },
     body: JSON.stringify(params)
   };
     console.log(JSON.stringify(params));
