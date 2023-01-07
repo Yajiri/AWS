@@ -54,7 +54,7 @@ function Map({ center, zoom }: MapProps) {
       return setClinic(allClinics);
     }).catch(err => {
       console.log(err)
-      //navigate("/unavailable")
+      navigate("/unavailable")
     });
   }, [ref])
 
