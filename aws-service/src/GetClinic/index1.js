@@ -30,4 +30,3 @@ var response = {
     callback(null, response);
 } catch (e) {console.log(e)}
         };
-
