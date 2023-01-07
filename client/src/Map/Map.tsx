@@ -48,6 +48,7 @@ function Map({ center, zoom }: MapProps) {
   useEffect(() => {
     clinicApi.getAllClinics<GetClinicsResponse>()
     .then((response: any) => {
+      console.log(response)
       let allClinics = response.data.Clinics;
       setClinic(allClinics);
       return setClinic(allClinics);
