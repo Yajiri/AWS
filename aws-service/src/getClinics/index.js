@@ -29,7 +29,13 @@ var response = {
     statusCode : 200,
     body: JSON.stringify(responseBody),
     isBase64Encoded : false,
-    headers:{"content-type" : "application/json"}
+    headers:{
+        "content-type" : "application/json",
+        "Access-Control-Allow-Headers" : "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        
+    }
 };
 
 // var response = {
@@ -38,7 +44,8 @@ var response = {
 //     //isBase64Encoded : false,
 //     //headers : {"content-type" : "application/json"}
 // };
-
-callback (null, response);
+try {
+    callback (null, response);
+} catch (e) {}
 
 };

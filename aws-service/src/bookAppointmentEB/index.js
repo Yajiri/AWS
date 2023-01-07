@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
-const AWS = require('aws-sdk')
-AWS.config.update({ region: "eu-central-1" })
-const eventBridge = new AWS.EventBridge()
+const AWS = require('aws-sdk');
+AWS.config.update({ region: "us-east-1" });
+const eventBridge = new AWS.EventBridge();
 
 exports.handler = async (event, context, callback) => {
     console.log("Processing...");
@@ -41,8 +41,10 @@ exports.handler = async (event, context, callback) => {
   };
     console.log(JSON.stringify(params));
   // Publish to EventBridge
-  const result = await eventBridge.putEvents(params).promise()
-  console.log(result)
+  const result = await eventBridge.putEvents(params).promise();
+  console.log(result);
   //todo: handle error 
-  return response
+  try {
+    return response;
+  } catch (e) {console.log(e)}
 };
