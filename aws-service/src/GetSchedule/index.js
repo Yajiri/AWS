@@ -1,10 +1,12 @@
 'use strict';
 const AWS = require('aws-sdk');
+
 //AWS.config.Update({ region: "eu-central-1"});
 
 exports.handler = async(event, context, callback) => {
     const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
-    let result = {}, timeSlots;
+    let result = {};
+    let timeSlots;
 
 //
     //  return {
@@ -100,7 +102,13 @@ exports.handler = async(event, context, callback) => {
                 statusCode : 200,
                 body: JSON.stringify(result),
                 isBase64Encoded : false,
-                headers:{"content-type" : "application/json"}
+                headers:{
+                    "content-type" : "application/json",
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+                    
+                }
             };
         }
         
@@ -203,16 +211,20 @@ exports.handler = async(event, context, callback) => {
         
         let hours = openingHoursForDay.split(":");
         let startH = parseFloat(hours[0]);
-        console.log(startH);
+        
+        
         hours = openingHoursForDay.split("-");
         const endH = parseFloat(hours[1].split(":")[0]);
-       
+        console.log("start hour", startH, "end hour", endH);
+        
         let i = 0;
         let newTimeSlots=[];
         let t = "";
         
-        while(startH <= endH - 0.5); {
+        while(startH <= endH - 0.5) {
+            console.log("start of loop", startH, endH);
             t = parseInt(startH, 10);
+        
             if(startH % 1 === 0.5) {
                 t += ":30";    
             } else {
@@ -225,7 +237,9 @@ exports.handler = async(event, context, callback) => {
             }
     
             startH += 0.5;
+            console.log("end of while", startH, endH);
         }
+        console.log("out of while");
         return newTimeSlots;
         
     }
