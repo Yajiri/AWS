@@ -1,5 +1,4 @@
 'use strict';  
-//bookAppointmentDDB
 const AWS = require('aws-sdk'); 
 const documentClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
 var ses = new AWS.SES({ region: "us-east-1" });

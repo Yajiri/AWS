@@ -1,6 +1,5 @@
 'use strict';
 const AWS = require('aws-sdk');
-//getSchedule lambda 
 //AWS.config.Update({ region: "eu-central-1"});
 
 exports.handler = async(event, context, callback) => {
