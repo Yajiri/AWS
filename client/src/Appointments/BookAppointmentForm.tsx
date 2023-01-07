@@ -39,7 +39,7 @@ class BookAppointmentForm extends React.Component<any,any> {
         const dateString = this.state.bookingData.y + "-" + this.state.bookingData.m + "-" + this.state.bookingData.d
         const id = this.state.bookingData.clinicId
         async function getTimeSlots(date:string) {
-            const data = await appointmentApi.getAppointments(id,dateString); 
+            const data = await appointmentApi.getAppointments(id, dateString); 
             
             return data;
         }
@@ -152,7 +152,7 @@ class BookAppointmentForm extends React.Component<any,any> {
             {this.checkAvailabitily(this.state.timeSlots) && (
                 <>
                     <div className="form-group">
-                    <label htmlFor="selectedTime">Select a slot*</label>
+                    <label htmlFor="selectedTime">Select a time*</label>
                     <Form.Select name="selectedTime" onChange={this.handleChange}>
                         {this.state.timeSlots.map((slot: { available: boolean; time: string; }) => {
                             if(slot.available){
