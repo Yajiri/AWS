@@ -131,7 +131,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getClinic
-      CodeUri: s3://dentistimo/GetClinic.zip
+      CodeUri: s3://dentistimogbg/GetClinic.zip
       FunctionName: getClinic
       Handler: index.handler
       Runtime: nodejs12.x
@@ -163,7 +163,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getClinics
-      CodeUri: s3://dentistimo/GetClinics.zip
+      CodeUri: s3://dentistimogbg/GetClinics.zip
       FunctionName: getClinics
       Handler: index.handler
       Runtime: nodejs12.x
@@ -195,7 +195,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: getSchedule
-      CodeUri: s3://dentistimo/GetSchedule.zip
+      CodeUri: s3://dentistimogbg/GetSchedule.zip
       FunctionName: getSchedule
       Handler: index.handler
       Runtime: nodejs12.x
@@ -233,7 +233,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointment
-      CodeUri: s3://dentistimo/BookAppointmentEB.zip
+      CodeUri: s3://dentistimogbg/BookAppointmentEB.zip
       FunctionName: bookAppointmentEB
       Handler: index.handler
       Runtime: nodejs12.x
@@ -265,7 +265,7 @@ Resources:
       Description: !Sub
         - Stack ${AWS::StackName} Function ${ResourceName}
         - ResourceName: bookAppointmentDDB
-      CodeUri: s3://dentistimo/BookAppointmentDDB.zip
+      CodeUri: s3://dentistimogbg/BookAppointmentDDB.zip
       FunctionName: bookAppointmentDDB
       Handler: index.handler
       Runtime: nodejs12.x
