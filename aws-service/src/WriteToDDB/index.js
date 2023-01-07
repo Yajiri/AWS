@@ -1,7 +1,8 @@
 'use strict';  
+//bookAppointmentDDB
 const AWS = require('aws-sdk'); 
-const documentClient = new AWS.DynamoDB.DocumentClient({region: 'eu-central-1'});
-var ses = new AWS.SES({ region: "eu-central-1" });
+const documentClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+var ses = new AWS.SES({ region: "us-east-1" });
 var log = true;
 
 function clog (message){
@@ -49,8 +50,9 @@ exports.handler = function(event, context, callback) {
               detail.timeSlots = clinicHours; // Assign newly created time slots to payload's Timeslot
               newRecord = createNewBooking(detail, clinicHours); // Adds new record if clinic and date do not exist
               
-
-              newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
+            try {
+                 newRecord = updateBooking(newRecord, time, bookings, dentists, detail); // Update the record as allowed with requested booking from payload
+            } catch (e) {clog(e)}
               
               clog("new record with parsed and payload: " + JSON.stringify(newRecord));
 
@@ -67,14 +69,17 @@ exports.handler = function(event, context, callback) {
           }
 
           await writeBooking(newRecord); // Write the record to the database
-    
-          callback(null, data);
+        try {
+             callback(null, data);
+        } catch (e) {clog(e)}
         } else {
             // why is data null or undefined? this is a system error, throw
             // the circuit breaker
-            const sysError = "as we are experiencing a system error."
+            const sysError = "as we are experiencing a system error.";
             denialMail(detail, sysError);
-            callback(err, null);
+            try {
+                callback(err, null);
+            } catch (e) {clog(e)}
         }
     }); 
 };
@@ -253,7 +258,7 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
         
         if ( (! found || typeof found === "undefined" ) ) { // this timeslot is not available
             // send a mail saying the requested date is not available for booking (failed)
-            const doesNotExist = "as appointments for the selected time does not exist."
+            const doesNotExist = "as appointments for the selected time does not exist.";
             denialMail(event, doesNotExist);
             clog("didn't find the record");
 
@@ -267,9 +272,9 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                 
             if (bookings < dentists) { // compare amount of bookings to num of dentists
                 if (allBookings.includes(email)) {
-                    const alreadyExists = "due to a previously confirmed appointment you have made for this date and time."
-                    clog(alreadyExists)
-                    denialMail(event, alreadyExists) // denial mail
+                    const alreadyExists = "due to a previously confirmed appointment you have made for this date and time.";
+                    clog(alreadyExists);
+                    denialMail(event, alreadyExists); // denial mail
                     clog("Error: you have already booked an appointment for this time.");
                 } else {
                     allBookings.splice(allBookings, 0, email); // add email to email array
@@ -284,7 +289,7 @@ const updateBooking = function(record, inputTime, email, dentists, event) {
                         "\nnew record timeslots " + JSON.stringify(record.timeSlots) );
                 }
             } else { // When a time is fully booked, return error email
-                const fullyBooked = "as we are fully booked for this date and time."
+                const fullyBooked = "as we are fully booked for this date and time.";
                 denialMail(event, fullyBooked);
                 clog("error: reached limit of " + JSON.stringify(bookings) + " bookings for this time.");
             }
