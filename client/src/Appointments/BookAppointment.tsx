@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { breakpoints } from '../MediaQueries';
 import {clinicApi} from '../services/clinicApi';
 import { appointmentApi } from "../services/appointment";
-import IClinic  from '../Types/IClinic'
+import IClinic  from '../interfaces/IClinic'
 
 const MainContainer = styled.div`
 height: 100vh;

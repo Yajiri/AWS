@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
-import ClinicType from '../Types/ClinicType';
+import ClinicType from '../interfaces/ClinicType';
 
 import styled from 'styled-components';
 

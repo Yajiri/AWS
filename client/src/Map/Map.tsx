@@ -4,7 +4,7 @@ import { clinicApi } from "../services/clinicApi";
 import MapPoint from "./MapPoint";
 import OverlayContainer from "./OverlayContainer";
 
-import ClinicType from '../Types/ClinicType';
+import ClinicType from '../interfaces/ClinicType';
 import { useNavigate } from "react-router-dom";
 
 type MapProps = {

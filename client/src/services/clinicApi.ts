@@ -1,7 +1,7 @@
 import { Api } from './Api'
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import ClinicType from '../Types/ClinicType'
+import ClinicType from '../interfaces/ClinicType'
 
 interface Clinic {
   clinicId: {N: string},
