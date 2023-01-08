@@ -9,6 +9,7 @@ logs
 **/*.back.*
 **/build/
 build/
+package-lock.json
 
 ### Linux ###
 *~
