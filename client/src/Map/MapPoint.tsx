@@ -3,7 +3,7 @@ import ClinicCard from "./ClinicCard"
 import ClinicPoint from "./ClinicPoint"
 import Overview from '../Home/Overview'
 
-import ClinicType from '../Types/ClinicType'
+import ClinicType from '../interfaces/ClinicType'
 
 const MapPoint = (props: ClinicType) => {
   const [opened, setIsOpened] = useState<boolean>(false);
