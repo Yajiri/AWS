@@ -1,5 +1,4 @@
 export default interface IClinic {
-    //comment
     city: {
         S: string
     },
