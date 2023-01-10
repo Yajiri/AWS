@@ -99,7 +99,7 @@ Open the `aws-service` and `client` in separate VSCode workspaces. Otherwise, wo
 4.4 The system event bus must consistently ingest, filter, transform, and deliver events. <br />
 4.5 The system event bus must have a QoS of 1. <br />
 4.6 The system database must be automatically backed up and restored. <br />
-4.7 The system database must have a guaranteed reliability with a service level agreement of up to 99. 999% availability. <br />
+4.7 The system database must have a guaranteed reliability with a service level agreement of up to 99.999% availability. <br />
 4.8 The system must be able to send emails for correspondence regarding appointments.
 
 
