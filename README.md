@@ -1,6 +1,13 @@
 # T12 Project
 
+## Project Structure
 
+| File        | Purpose           | What you do?  |
+| ------------- | ------------- | ----- |
+| `aws-service/` | Backend server code | All our backend code |
+| [aws-service/README.md](aws-service/README.md) | Everything about the AWS cloud services employed | **READ ME** carefully! |
+| `client/` | Frontend client code | All our client code |
+| [client/README.md](client/README.md) | Everything about the client | **READ ME** carefully! |
 
 ## Getting started
 
