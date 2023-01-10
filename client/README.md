@@ -44,7 +44,7 @@ npm run lint
 ## Axios HTTP Library
 
 * [Documentation with Examples](https://github.com/axios/axios#axios)
-* Under ```services/Api.ts``` replace the baseURL with the OutputValue displayed upon stack creation when running the get-gateway-url.sh script.
+* Under ```services/Api.ts``` replace the baseURL value with the OutputValue displayed upon stack creation when running the get-gateway-url.sh script.
 
 ## Debug in VSCode with Chrome
 
