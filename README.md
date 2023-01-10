@@ -48,11 +48,11 @@ git push -uf origin main
 
 Open the `aws-service` and `client` in separate VSCode workspaces or open the combined [backend-frontend.code-workspace](./backend-frontend.code-workspace). Otherwise, workspace-specific settings don't work properly.
 
-## Subdocuments
-
 ## Component Diagram
+![Component Diagram](./images/architecturalDiagram.jpg)
 
 ## Deployment Diagram
+![Deployment Diagram](./images/deploymentDiagram.jpg)
 
 ## Management Information
 * [Team contract](https://docs.google.com/document/d/1PkyUxVrU0eNpNeg57AUOUS2Zt7LKS6iw/edit?usp=sharing&ouid=117252867812016978037&rtpof=true&sd=true)
