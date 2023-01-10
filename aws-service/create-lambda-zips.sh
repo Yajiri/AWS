@@ -7,11 +7,11 @@ fi
 mkdir build
 cd build
 
-zip bookAppointmentDDB.zip ../src/bookAppointmentDDB/index.js
-zip bookAppointmentEB.zip ../src/bookAppointmentEB/index.js
-zip getClinics.zip ../src/getClinics/index.js
-zip getClinic.zip ../src/getClinic/index.js
-zip getSchedule.zip ..src/getSchedule.index.js
+zip BookAppointmentDDB.zip ../src/bookAppointmentDDB/index.js
+zip BookAppointmentEB.zip ../src/bookAppointmentEB/index.js
+zip GetClinics.zip ../src/getClinics/index.js
+zip GetClinic.zip ../src/getClinic/index.js
+zip GetSchedule.zip ..src/getSchedule.index.js
 
 
 aws s3 cp bookAppointmentDDB.zip s3://dentistimogbg
