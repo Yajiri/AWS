@@ -14,8 +14,8 @@ zip GetClinic.zip ../src/getClinic/index.js
 zip GetSchedule.zip ..src/getSchedule.index.js
 
 
-aws s3 cp bookAppointmentDDB.zip s3://dentistimogbg
-aws s3 cp bookAppointmentEB.zip s3://dentistimogbg
-aws s3 cp getClinic.zip s3://dentistimogbg
-aws s3 cp getClinics.zip s3://dentistimogbg
-aws s3 cp getSchedule.zip s3://dentistimogbg
+aws s3 cp BookAppointmentDDB.zip s3://dentistimogbg
+aws s3 cp BookAppointmentEB.zip s3://dentistimogbg
+aws s3 cp GetClinic.zip s3://dentistimogbg
+aws s3 cp GetClinics.zip s3://dentistimogbg
+aws s3 cp GetSchedule.zip s3://dentistimogbg
