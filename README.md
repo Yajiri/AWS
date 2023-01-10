@@ -28,8 +28,8 @@ You can also use alternative tools if you know how to configure them (e.g., Fire
     * Add your public SSH key to your Gitlab profile under https://git.ita.chalmers.se/profile/keys
     * Make sure the email you use to commit is registered under https://git.ita.chalmers.se/profile/emails
   * Checkout the [Backend-Frontend](https://git.ita.chalmers.se/courses/dit341/group-00-web) template `git clone git@git.chalmers.se:courses/dit355/dit356-2022/t-12/t12-project.git`
-* [AWS Toolkit Requirements](./aws-service/README.md#Requirements)
-* [Client Requirements](./client/README.md#Requirements)
+* [AWS Requirements](./aws-service/README.md)
+* [Client Requirements](./client/README.md)
 ## Add your files
 
 - [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
@@ -46,7 +46,7 @@ git push -uf origin main
 
 ## Visual Studio Code (VSCode)
 
-Open the `aws-service` and `client` in separate VSCode workspaces or open the combined [backend-frontend.code-workspace](./backend-frontend.code-workspace). Otherwise, workspace-specific settings don't work properly.
+Open the `aws-service` and `client` in separate VSCode workspaces. Otherwise, workspace-specific settings don't work properly.
 
 ## Component Diagram
 ![Component Diagram](./images/architecturalDiagram.jpg)
@@ -65,7 +65,9 @@ Open the `aws-service` and `client` in separate VSCode workspaces or open the co
 * [G-Drive](https://docs.google.com/document/d/1wGDZf7wz66K8dJopoc7XrrgvpvTwefONcH48T1UvmCk/edit?usp=share_link)
 
 ## Frontend
+
 ### Requirements
+
 #### Home Page
 1.1 The system shall have a web-based user interface, so that the system can be accessible from multiple devices <br />
 1.2 The home page shall contain a map-view over Gothenburg, so that that can be navigated by the patient. <br />
@@ -80,18 +82,29 @@ Open the `aws-service` and `client` in separate VSCode workspaces or open the co
 2.3 No appointments shall be available for booking from 12:00 to 13:00, so that dentists can take a lunch break. <br />
 2.4 No appointments shall be available for booking from 14:30 to 15:00, so that dentists can go on a fika break. <br />
 2.5 A patient shall be able to request an appointment with their provided information, so that their appointment booking can be traced back to them. <br />
-2.6 The patient shall be prompted for missing input if there are invalid input parameters, so that only valid booking requests can be made for processing. <br />
+2.6 The patient shall be prompted for missing input if there are invalid input parameters, so that only valid booking requests can be made for processing.
 
 #### Confirmation Notification
 3.1 The patient shall receive an email with a status update regarding their booking request, so that they can ascertain whether their appointment booking is confirmed or rejected. <br />
 3.2 The patient shall receive a confirmation email upon successful booking acceptance, so that they know if their booking request has been successfully completed. <br />
 3.3 The patient shall receive a rejection email with a detailed reason as to why their booking request cannot be completed, so that they know why their booking request could not be processed for completion. <br />
-3.4 The patient shall receive a link back to dentistimo.com upon receipt of a rejection email regarding their booking, so that they can try again for another date, clinic, and/ or time if they need. <br />
+3.4 The patient shall receive a link back to dentistimo.com upon receipt of a rejection email regarding their booking, so that they can try again for another date, clinic, and/ or time if they need.
 
 ## Backend
+
 ### Requirements
+4.1 The system must be highly available. <br />
+4.2 The system must scale automatically between a few requests per day to thousands per second. <br />
+4.3 The system must have concurrency limits and provisioned concurrency for control over the scaling and responsiveness of the dentistimo production application. <br />
+4.4 The system event bus must consistently ingest, filter, transform, and deliver events. <br />
+4.5 The system event bus must have a QoS of 1. <br />
+4.6 The system database must be automatically backed up and restored. <br />
+4.7 The system database must have a guaranteed reliability with a service level agreement of up to 99. 999% availability. <br />
+4.8 The system must be able to send emails for correspondence regarding appointments.
+
 
 ## Architectural Drivers
+
 ### Frontend
 We decided to go with a web-client as a website as it is portable and accessible to users across all devices. TypeScript happens to be relatively similar to JavaScript, which we have experience with from a previous course, which makes the development phase less stressful, and less error-prone. In order to minimise the potential risks from being less experienced with a programming language, we decided to use TypeScript, which shares a lot of its syntax from JavaScript. We have also decided to use the React framework for its ease of learning and how it contains plenty of functionality we may use throughout the development phase.
 
