@@ -69,6 +69,7 @@ https://awscli.amazonaws.com/AWSCLIV2.pkg.
 Clone the repository on your local machine. In a git bash terminal, write “git clone https://git.chalmers.se/courses/dit355/dit356-2022/t-12/t12-project.git ”
 
 ## Installation
+[AWS CLI Installation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) <br />
 In WSL (Windows) or Terminal (Mac), run the following command: ```aws configure```
 
 For the access key, provide the following: ```AKIATRGY6JPYVHNDJHVK```
