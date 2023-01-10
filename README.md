@@ -123,7 +123,7 @@ Amazon DynamoDB is a fully managed NoSQL database service that provides fast and
 ### AWS SES (Simple Email Service)
 SES (Simple Email Service) was chosen in order to satisfy the requirement of sending request feedback to the user upon the attempt of booking an appointment. In our system, when a booking is successful, an approved booking will trigger the sending of a successful booking email, whereas an unsuccessful booking (for example, if the selected time slot was taken faster by another user) will trigger the sending of a failed booking email prompting the user to try again with the provided URL back to our dentistimo website.
 
-### CloudFormation
+### AWS CloudFormation
 Additionally, in order to leverage Amazon’s very useful solution for building and managing the system, we used CloudFormation in order to create or delete the entire stack at will, with all the necessary permissions and connections. In order to be able to create the stack on any operating system, we have created linux scripts that when run, deploy the entire system based on the source code files on our repository (zipping the files, uploading them to the S3 bucket, creating the stack based on the template).
 
 ### Motivation
