@@ -332,6 +332,10 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES  
       TableName: DentistimoAppointmentsTable
+Outputs:
+  ProdDataEndpoint:
+    Description: "Dentistimo API Prod stage endpoint"
+    Value: !Sub "https://${dentistimo}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   
 Metadata:
   AWS::Composer::Groups:
